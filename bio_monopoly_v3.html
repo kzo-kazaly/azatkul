@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIO MONOPOLY – ҰБТ | Командалық нұсқа</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4ff;--surface:#fff;--surface2:#f5f7ff;--border:#d0d9f0;--text:#1a2340;--muted:#5a6a8a;--shadow:rgba(80,100,160,.13);
+  --green:#12b76a;--green-d:#0a8a4e;--green-l:#d1fae5;--green-b:#6ee7b7;
+  --yellow:#f59e0b;--yellow-d:#b45309;--yellow-l:#fef3c7;--yellow-b:#fde68a;
+  --red:#ef4444;--red-d:#b91c1c;--red-l:#fee2e2;--red-b:#fca5a5;
+  --purple:#7c3aed;--purple-d:#5b21b6;--purple-l:#ede9fe;--purple-b:#c4b5fd;
+  --blue:#2563eb;--blue-l:#dbeafe;--blue-b:#93c5fd;
+  --teal:#0891b2;--teal-l:#cffafe;--orange:#ea580c;--orange-l:#ffedd5;
+  font-family:'Nunito',sans-serif;
+}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 20%,rgba(124,58,237,.06) 0%,transparent 55%),radial-gradient(ellipse at 85% 80%,rgba(37,99,235,.06) 0%,transparent 55%);pointer-events:none;z-index:0}
+.screen{display:none;position:relative;z-index:1}
+.screen.active{display:block}
+/* SETUP */
+#setup-screen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px}
+#setup-screen.active{display:flex}
+.setup-box{background:var(--surface);border:2px solid var(--border);border-radius:28px;padding:36px;max-width:700px;width:100%;box-shadow:0 8px 40px var(--shadow)}
+.logo{text-align:center;margin-bottom:28px}
+.logo-title{font-family:'Fredoka One',cursive;font-size:44px;background:linear-gradient(135deg,#7c3aed,#2563eb,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.logo-sub{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:4px;font-weight:700}
+.logo-badge{display:inline-block;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;font-size:11px;font-weight:800;padding:4px 16px;border-radius:20px;letter-spacing:1px;margin-top:10px}
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:800;margin-bottom:10px}
+.count-row{display:flex;gap:8px;margin-bottom:24px}
+.cnt-btn{flex:1;padding:11px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
+.cnt-btn:hover{border-color:var(--purple);color:var(--purple)}
+.cnt-btn.sel{background:linear-gradient(135deg,#7c3aed,#5b21b6);border-color:#7c3aed;color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.3)}
+.teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.team-card{background:var(--surface2);border:2px solid var(--border);border-radius:18px;padding:16px}
+.team-card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.team-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:2px solid var(--border)}
+.team-card-title{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.team-input{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;font-weight:700;padding:9px 12px;outline:none;transition:border-color .2s;font-family:'Nunito',sans-serif}
+.team-input:focus{border-color:var(--purple)}
+.color-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.c-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .15s;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.c-dot:hover{transform:scale(1.15)}
+.c-dot.sel{border-color:#1a2340;transform:scale(1.2)}
+.setup-actions{display:flex;gap:10px;margin-bottom:16px}
+.rules-btn-top{flex:1;padding:13px;background:linear-gradient(135deg,#0891b2,#0e7490);border:none;border-radius:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(8,145,178,.3);transition:all .2s}
+.rules-btn-top:hover{transform:translateY(-1px)}
+.start-btn{flex:2;padding:13px;background:linear-gradient(135deg,#7c3aed,#2563eb);border:none;border-radius:14px;color:#fff;font-size:17px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;box-shadow:0 8px 28px rgba(124,58,237,.35)}
+.start-btn:hover{transform:translateY(-2px)}
+/* RULES MODAL */
+.rules-modal-overlay{position:fixed;inset:0;background:rgba(15,20,50,.5);display:none;align-items:center;justify-content:center;z-index:500;padding:20px;backdrop-filter:blur(6px)}
+.rules-modal-overlay.open{display:flex}
+.rules-modal{background:#fff;border:2px solid var(--border);border-radius:24px;padding:32px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.2);animation:modalIn .25s ease}
+.rules-modal-head{display:flex;align-items:center;margin-bottom:18px}
+.rules-modal-head h2{font-family:'Fredoka One',cursive;font-size:24px;color:var(--purple)}
+.rules-close{margin-left:auto;background:#f0f0f8;border:none;border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer;color:var(--muted);transition:all .2s}
+.rules-close:hover{background:var(--red-l);color:var(--red)}
+.rule-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.45}
+.rule-row:last-child{border-bottom:none}
+.rule-icon{font-size:22px;flex-shrink:0;width:32px;text-align:center}
+.rule-body{color:var(--muted)}
+.rule-body strong{color:var(--text);font-weight:800}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* GAME */
+#game-screen{min-height:100vh;display:none;flex-direction:column}
+#game-screen.active{display:flex}
+.game-header{background:var(--surface);border-bottom:2px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:14px;flex-shrink:0;box-shadow:0 2px 12px var(--shadow)}
+.gh-logo{font-family:'Fredoka One',cursive;font-size:20px;background:linear-gradient(135deg,#7c3aed,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
+.gh-center{flex:1;display:flex;justify-content:center;align-items:center;gap:8px}
+.gh-turn-label{font-size:12px;color:var(--muted);font-weight:700}
+.gh-turn-name{font-size:15px;font-weight:900;padding:4px 14px;border-radius:20px;color:#fff}
+.gh-actions{display:flex;gap:8px}
+.gh-rules-btn{padding:6px 14px;background:var(--teal-l);border:1.5px solid #a5f3fc;border-radius:10px;font-size:12px;font-weight:800;color:var(--teal);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s}
+.gh-end{padding:6px 14px;background:var(--red-l);border:1.5px solid #fca5a5;border-radius:10px;font-size:12px;font-weight:800;color:var(--red);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s}
+.game-body{flex:1;display:block;position:relative;overflow:hidden;min-height:0}
+.side-panel{position:absolute;z-index:20;background:rgba(255,255,255,0.96);border:2px solid var(--border);border-radius:16px;width:190px;box-shadow:0 4px 24px var(--shadow);display:flex;flex-direction:column;overflow:visible}
+.side-panel.right{border-left:2px solid var(--border)}
+#left-panel{top:10px;left:10px}
+#right-panel{top:10px;right:10px}
+.sp-header{padding:8px 12px;border-bottom:2px solid var(--border);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);border-radius:14px 14px 0 0}
+.team-status-card{padding:12px 14px;border-bottom:1px solid var(--border);transition:background .3s}
+.team-status-card.active-team{background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(37,99,235,.04))}
+.tsc-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.tsc-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,.08)}
+.tsc-name{font-size:13px;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tsc-active-badge{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:6px;color:#fff;white-space:nowrap}
+.tsc-score{font-size:30px;font-weight:900;line-height:1}
+.tsc-score-label{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.tsc-pos{font-size:11px;color:var(--muted);margin-top:4px;font-weight:600}
+.tsc-bar-wrap{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px}
+.tsc-bar{height:100%;border-radius:3px;transition:width .5s ease}
+.log-dot{display:none}
+/* BOARD */
+.board-area{display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:auto;padding:10px;background:var(--bg);position:relative;width:100%;height:100%}
+.board-container{position:relative}
+.board{display:grid;gap:3px}
+.cell{border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px;cursor:default;position:relative;overflow:hidden;border:2px solid transparent;transition:outline .1s;min-width:0}
+.cell.easy{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
+.cell.med{background:#fef3c7;border-color:#fde68a;color:#78350f}
+.cell.hard{background:#fee2e2;border-color:#fca5a5;color:#7f1d1d}
+.cell.special{background:#ede9fe;border-color:#c4b5fd;color:#4c1d95}
+.cell.special.lab{background:#dbeafe;border-color:#93c5fd;color:#1e3a8a}
+.cell.special.virus{background:#fce7f3;border-color:#f9a8d4;color:#831843}
+.cell.special.mutation{background:#ede9fe;border-color:#c4b5fd;color:#4c1d95}
+.cell.special.toxin{background:#ffedd5;border-color:#fdba74;color:#7c2d12}
+.cell.special.transport{background:#cffafe;border-color:#67e8f9;color:#164e63}
+.cell.special.hard_cell{background:linear-gradient(135deg,#fef3c7,#ede9fe);border-color:#c4b5fd;color:#4c1d95}
+.cell.corner{background:linear-gradient(135deg,#e0f2fe,#dbeafe);border-color:#93c5fd;color:#1e3a8a}
+.cell.empty{background:transparent;border:none;pointer-events:none}
+.cell.center-cell{border-radius:16px;background:#fff;border:3px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:14px;gap:5px;pointer-events:none;margin:18px}
+.cell-num{font-size:11px;font-weight:800;opacity:.45;line-height:1;position:absolute;top:3px;left:4px}
+.cell-name{font-size:11px;font-weight:800;text-align:center;line-height:1.2}
+.cell-pts{font-size:10px;font-weight:800;margin-top:2px;opacity:.85}
+.cell-pawns{display:none}
+.pawn{display:none}
+@keyframes teamPulse{
+  0%{
+    box-shadow:0 0 0 0 var(--gc,#fff),
+               0 0 8px 3px var(--gc2,#fff),
+               0 0 20px 6px var(--gc2,#fff);
+    border-color:var(--gc,transparent);
+    transform:scale(1);
+    filter:brightness(1);
+  }
+  50%{
+    box-shadow:0 0 0 5px var(--gc3,transparent),
+               0 0 18px 8px var(--gc,#fff),
+               0 0 45px 18px var(--gc2,#fff);
+    border-color:var(--gc,transparent);
+    transform:scale(1.06);
+    filter:brightness(1.25);
+  }
+  100%{
+    box-shadow:0 0 0 0 var(--gc,#fff),
+               0 0 8px 3px var(--gc2,#fff),
+               0 0 20px 6px var(--gc2,#fff);
+    border-color:var(--gc,transparent);
+    transform:scale(1);
+    filter:brightness(1);
+  }
+}
+@keyframes teamPulse2{
+  0%,100%{
+    box-shadow:0 0 0 0 var(--gc,#fff),0 0 10px 4px var(--gc2,#fff),0 0 24px 8px var(--gc2,#fff);
+    border-color:var(--gc,transparent);transform:scale(1);filter:brightness(1);
+  }
+  30%{
+    box-shadow:0 0 0 5px var(--gc3,transparent),0 0 20px 9px var(--gc,#fff),0 0 50px 20px var(--gc2,#fff);
+    border-color:var(--gc,transparent);transform:scale(1.06);filter:brightness(1.25);
+  }
+  65%{
+    box-shadow:0 0 0 4px var(--gc6,transparent),0 0 16px 7px var(--gc4,#fff),0 0 38px 15px var(--gc5,#fff);
+    border-color:var(--gc4,transparent);transform:scale(1.06);filter:brightness(1.2);
+  }
+}
+.cell.has-team-1{
+  animation:teamPulse 1.1s ease-in-out infinite;
+  border-width:2.5px;
+  z-index:3;
+  position:relative;
+}
+.cell.has-team-2{
+  animation:teamPulse2 1.3s ease-in-out infinite;
+  border-width:2.5px;
+  z-index:3;
+  position:relative;
+}
+.cell-icon{font-size:16px;line-height:1}
+@keyframes cellStep{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}
+.cell.step-highlight{animation:cellStep .35s ease;z-index:5}
+@keyframes labGlow{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.5)}50%{box-shadow:0 0 0 10px rgba(37,99,235,.0)}}
+@keyframes virusShake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+@keyframes mutationSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes toxinFlash{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4) saturate(1.6)}}
+@keyframes transportBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes correctFlash{0%,100%{background:#d1fae5}50%{background:#a7f3d0;box-shadow:0 0 12px rgba(18,183,106,.5)}}
+@keyframes wrongFlash{0%,100%{background:#fee2e2}50%{background:#fca5a5;box-shadow:0 0 12px rgba(239,68,68,.5)}}
+.cell.anim-lab{animation:labGlow .7s ease 3}
+.cell.anim-virus{animation:virusShake .3s ease 4}
+.cell.anim-mutation .cell-icon{display:inline-block;animation:mutationSpin .8s ease 2}
+.cell.anim-toxin{animation:toxinFlash .5s ease 3}
+.cell.anim-transport .cell-icon{display:inline-block;animation:transportBounce .4s ease 4}
+.cell.anim-correct{animation:correctFlash .5s ease 3}
+.cell.anim-wrong{animation:wrongFlash .5s ease 3}
+.center-logo{font-family:'Fredoka One',cursive;font-size:16px;background:linear-gradient(135deg,#7c3aed,#2563eb,#0891b2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.center-sub{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px}
+.level-chips{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;justify-content:center}
+.lchip{padding:2px 8px;border-radius:20px;font-size:8px;font-weight:800;letter-spacing:.5px}
+.lchip.e{background:var(--green-l);color:var(--green-d);border:1.5px solid var(--green-b)}
+.lchip.m{background:var(--yellow-l);color:var(--yellow-d);border:1.5px solid var(--yellow-b)}
+.lchip.h{background:var(--red-l);color:var(--red-d);border:1.5px solid var(--red-b)}
+/* QUESTION CARD */
+.center-question-card{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:85%;z-index:50;background:#fff;border:3px solid var(--border);border-radius:22px;padding:18px 20px;box-shadow:0 16px 60px rgba(80,100,180,.18);animation:cardIn .3s ease;max-height:90%;overflow-y:auto}
+.center-question-card.visible{display:block}
+@keyframes cardIn{from{opacity:0;transform:translate(-50%,-46%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.cqc-top{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.cqc-badge{padding:4px 12px;border-radius:8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.cqc-badge.easy{background:var(--green-l);color:var(--green-d);border:1.5px solid var(--green-b)}
+.cqc-badge.med{background:var(--yellow-l);color:var(--yellow-d);border:1.5px solid var(--yellow-b)}
+.cqc-badge.hard{background:var(--red-l);color:var(--red-d);border:1.5px solid var(--red-b)}
+.cqc-cell{font-size:12px;color:var(--muted);font-weight:600}
+.cqc-pts{margin-left:auto;font-size:18px;font-weight:900}
+.cqc-banner{padding:8px 12px;border-radius:10px;margin-bottom:10px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;border-left:4px solid}
+.cqc-timer-wrap{height:5px;background:var(--border);border-radius:4px;margin-bottom:10px;overflow:hidden}
+.cqc-timer-bar{height:100%;border-radius:4px;transition:width .1s linear,background .5s}
+.cqc-question{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:12px;font-size:14px;font-weight:700;line-height:1.5;margin-bottom:10px;color:var(--text)}
+/* Multiple choice options */
+.cqc-options{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.cqc-option{padding:8px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:var(--surface2);display:flex;align-items:flex-start;gap:8px}
+.cqc-option:hover{border-color:var(--blue);background:var(--blue-l)}
+.cqc-option.selected{border-color:var(--blue);background:var(--blue-l)}
+.cqc-option.correct-opt{border-color:var(--green);background:var(--green-l) !important}
+.cqc-option.wrong-opt{border-color:var(--red);background:var(--red-l) !important}
+.opt-key{font-weight:900;flex-shrink:0;min-width:20px}
+/* Matching */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.match-col{display:flex;flex-direction:column;gap:5px}
+.match-col-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.match-item{padding:7px 10px;border:2px solid var(--border);border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;background:var(--surface2);transition:all .2s}
+.match-item:hover{border-color:var(--purple);background:var(--purple-l)}
+.match-item.selected-left{border-color:var(--purple);background:var(--purple-l)}
+.match-item.matched{border-color:var(--green);background:var(--green-l)}
+.match-item.wrong-match{border-color:var(--red);background:var(--red-l)}
+.match-pairs-display{margin-bottom:10px;display:flex;flex-wrap:wrap;gap:5px}
+.match-pair-chip{font-size:11px;padding:4px 10px;border-radius:8px;background:var(--purple-l);border:1.5px solid var(--purple-b);color:var(--purple-d);font-weight:700}
+.cqc-answer{background:var(--green-l);border:2px solid var(--green-b);border-radius:12px;padding:12px;margin-bottom:10px;display:none}
+.cqc-answer-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--green-d);font-weight:800;margin-bottom:5px}
+.cqc-answer-text{font-size:13px;color:var(--text);line-height:1.45;font-weight:600}
+.cqc-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-show-q{flex:1;min-width:110px;padding:9px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s}
+.btn-show-q:hover{border-color:var(--blue);color:var(--blue)}
+.btn-correct{flex:1;min-width:90px;padding:9px;background:linear-gradient(135deg,#12b76a,#059669);border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(18,183,106,.3);transition:all .2s}
+.btn-correct:hover{transform:translateY(-1px)}
+.btn-wrong{flex:1;min-width:90px;padding:9px;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(239,68,68,.3);transition:all .2s}
+.btn-wrong:hover{transform:translateY(-1px)}
+.btn-check{flex:1;min-width:110px;padding:9px;background:linear-gradient(135deg,#7c3aed,#5b21b6);border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(124,58,237,.3);transition:all .2s}
+.btn-check:hover{transform:translateY(-1px)}
+/* DICE BAR */
+.dice-bar{display:none}
+/* CENTER CONTROLS */
+.center-controls{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;background:rgba(255,255,255,0.97);border:2px solid var(--border);border-radius:20px;padding:16px 22px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 6px 32px var(--shadow);min-width:200px;pointer-events:auto}
+.center-controls .dice-face{font-size:44px;line-height:1;flex-shrink:0}
+.center-controls .dice-face.rolling{animation:diceRoll .4s ease}
+.center-controls-btns{display:flex;flex-direction:column;gap:7px;width:100%}
+.center-controls .dice-btn{width:100%;padding:11px 18px;background:linear-gradient(135deg,#7c3aed,#2563eb);border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(124,58,237,.3);transition:all .2s}
+.center-controls .dice-btn:hover:not(:disabled){transform:translateY(-2px)}
+.center-controls .dice-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.center-controls .show-question-btn{width:100%;padding:10px 16px;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(245,158,11,.3);display:none;transition:all .2s;text-align:center}
+.center-controls .show-question-btn:hover{transform:translateY(-1px)}
+.center-controls .show-question-btn.visible{display:block}
+.center-controls .skip-btn{width:100%;padding:9px 14px;background:var(--orange-l);border:2px solid #fdba74;border-radius:12px;color:var(--orange);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;display:none;transition:all .2s;text-align:center}
+.center-controls .skip-btn.visible{display:block}
+.center-controls #effect-area{width:100%;text-align:center}
+.dice-face{font-size:38px;line-height:1;flex-shrink:0}
+.dice-face.rolling{animation:diceRoll .4s ease}
+@keyframes diceRoll{0%{transform:rotate(0) scale(.7)}50%{transform:rotate(180deg) scale(1.2)}100%{transform:rotate(360deg) scale(1)}}
+.dice-btn{padding:10px 20px;background:linear-gradient(135deg,#7c3aed,#2563eb);border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(124,58,237,.3);transition:all .2s}
+.dice-btn:hover:not(:disabled){transform:translateY(-2px)}
+.dice-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.show-question-btn{padding:10px 16px;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(245,158,11,.3);display:none;transition:all .2s}
+.show-question-btn:hover{transform:translateY(-1px)}
+.show-question-btn.visible{display:block}
+.skip-btn{padding:9px 14px;background:var(--orange-l);border:2px solid #fdba74;border-radius:12px;color:var(--orange);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;display:none;transition:all .2s}
+.skip-btn.visible{display:block}
+.effect-msg{padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.effect-good{background:var(--green-l);border:1.5px solid var(--green-b);color:var(--green-d)}
+.effect-bad{background:var(--red-l);border:1.5px solid var(--red-b);color:var(--red-d)}
+.effect-info{background:var(--purple-l);border:1.5px solid var(--purple-b);color:var(--purple-d)}
+/* RESULT */
+#result-screen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px}
+#result-screen.active{display:flex}
+.result-box{background:#fff;border:2px solid var(--border);border-radius:28px;padding:36px;max-width:520px;width:100%;text-align:center;box-shadow:0 12px 48px var(--shadow)}
+.trophy{font-size:72px;margin-bottom:8px;animation:trophyBounce 1s ease .3s both}
+@keyframes trophyBounce{0%{transform:scale(0) rotate(-10deg)}60%{transform:scale(1.2) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
+.winner-label{font-size:12px;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:800;margin-bottom:6px}
+.winner-name{font-family:'Fredoka One',cursive;font-size:38px;margin-bottom:4px}
+.winner-pts{font-size:16px;color:var(--muted);margin-bottom:28px;font-weight:700}
+.podium{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;text-align:left}
+.podium-row{display:flex;align-items:center;gap:12px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:10px 14px}
+.podium-rank{font-size:22px;min-width:30px}
+.podium-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,.08)}
+.podium-name{flex:1;font-size:14px;font-weight:800}
+.podium-bar-wrap{width:80px;height:6px;background:var(--border);border-radius:4px;overflow:hidden}
+.podium-bar{height:100%;border-radius:4px}
+.podium-pts{font-size:16px;font-weight:900;min-width:56px;text-align:right}
+.play-again{width:100%;padding:16px;background:linear-gradient(135deg,#7c3aed,#2563eb);border:none;border-radius:16px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 8px 28px rgba(124,58,237,.35);transition:all .2s}
+.play-again:hover{transform:translateY(-2px)}
+.confetti-piece{position:fixed;width:8px;height:8px;pointer-events:none;z-index:300;border-radius:2px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+/* CHAPTER SELECT */
+.chapter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.chapter-card{padding:12px 10px;background:var(--surface2);border:2px solid var(--border);border-radius:14px;cursor:pointer;text-align:center;transition:all .2s;font-family:'Nunito',sans-serif}
+.chapter-card:hover{border-color:var(--purple);background:var(--purple-l)}
+.chapter-card.sel{background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(37,99,235,.08));border-color:var(--purple);box-shadow:0 4px 14px rgba(124,58,237,.18)}
+.chapter-card-icon{font-size:26px;margin-bottom:4px}
+.chapter-card-name{font-size:12px;font-weight:800;color:var(--text);line-height:1.3}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup-screen" class="screen">
+  <div class="setup-box">
+    <div class="logo">
+      <div class="logo-title">🧬 BIO MONOPOLY</div>
+      <div class="logo-sub">Жасушалық биология</div>
+      <div class="logo-badge">ҰБТ · 60 ҚАДАМ · КОМАНДАЛЫҚ</div>
+    </div>
+    <div class="section-label">Тарауды таңдаңыз</div>
+    <div class="chapter-grid">
+      <div class="chapter-card sel" id="chap-jasushalyq" onclick="selectChapter('jasushalyq')">
+        <div class="chapter-card-icon">🔬</div>
+        <div class="chapter-card-name">Жасушалық биология</div>
+      </div>
+      <div class="chapter-card" id="chap-tukym" onclick="selectChapter('tukym')">
+        <div class="chapter-card-icon">🧬</div>
+        <div class="chapter-card-name">Тұқымқуалаушылық және өзгергіштік</div>
+      </div>
+    </div>
+    <div class="section-label">Команда саны</div>
+    <div class="count-row">
+      <button class="cnt-btn sel" onclick="setCount(2)">2 команда</button>
+      <button class="cnt-btn" onclick="setCount(3)">3 команда</button>
+      <button class="cnt-btn" onclick="setCount(4)">4 команда</button>
+    </div>
+    <div class="section-label" style="margin-bottom:10px">Командаларды баптаңыз</div>
+    <div class="teams-grid" id="teams-grid"></div>
+    <div class="setup-actions">
+      <button class="rules-btn-top" onclick="openRulesModal()">📋 Ойын ережесі</button>
+      <button class="start-btn" onclick="startGame()">🚀 Ойынды бастау</button>
+    </div>
+  </div>
+</div>
+
+<!-- RULES MODAL -->
+<div class="rules-modal-overlay" id="rules-modal-overlay" onclick="closeRulesModal(event)">
+  <div class="rules-modal">
+    <div class="rules-modal-head">
+      <h2>📋 Ойын ережесі</h2>
+      <button class="rules-close" onclick="closeRulesModalDirect()">✕</button>
+    </div>
+    <div class="rule-row"><div class="rule-icon">🎲</div><div class="rule-body"><strong>Жүріс:</strong> Кезекпен кубик тастайсыз. Тасталған соң «Сұрақты көру» батырмасы пайда болады.</div></div>
+    <div class="rule-row"><div class="rule-icon">🟢</div><div class="rule-body"><strong>А деңгейі (жасыл, +1 балл):</strong> Тест сұрақтары. 1 дұрыс жауап таңдаңыз.</div></div>
+    <div class="rule-row"><div class="rule-icon">🟡</div><div class="rule-body"><strong>В деңгейі (сары, +2 балл):</strong> Тест сұрақтары. Бірнеше дұрыс жауап болады. Толық дұрыс = 2 балл, жартылай = 1 балл.</div></div>
+    <div class="rule-row"><div class="rule-icon">🔴</div><div class="rule-body"><strong>С деңгейі (қызыл, +3 балл):</strong> Сәйкестендіру. Барлығын дұрыс таппаса баллды азайтып береміз.</div></div>
+    <div class="rule-row"><div class="rule-icon">🔬</div><div class="rule-body"><strong>Зертхана:</strong> Тікелей +2 балл! Сұрақ жоқ.</div></div>
+    <div class="rule-row"><div class="rule-icon">🦠</div><div class="rule-body"><strong>Вирус:</strong> -1 баллдан айырыласыз.</div></div>
+    <div class="rule-row"><div class="rule-icon">🧬</div><div class="rule-body"><strong>Мутация:</strong> Кубикті қайтадан тастайсыз.</div></div>
+    <div class="rule-row"><div class="rule-icon">☠️</div><div class="rule-body"><strong>Токсин:</strong> Келесі жүрісіңізді өткізіп жібересіз.</div></div>
+    <div class="rule-row"><div class="rule-icon">🔄</div><div class="rule-body"><strong>Тасымал:</strong> 1–3 ұяшыққа қосымша алдыға жылжисыз.</div></div>
+    <div class="rule-row"><div class="rule-icon">👑</div><div class="rule-body"><strong>Ядро Сарайы:</strong> С деңгейлі сәйкестендіру сұрағы (3 балл)!</div></div>
+    <div class="rule-row"><div class="rule-icon">🏆</div><div class="rule-body"><strong>Жеңу шарты:</strong> 50 балл жинаған команда жеңімпаз.</div></div>
+    <div class="rule-row"><div class="rule-icon">🎨</div><div class="rule-body"><strong>Жүріс анимациясы:</strong> Фишка ұяшықты командаңыздың түсімен кезекпен жандырып өтеді!</div></div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game-screen" class="screen">
+  <div class="game-header">
+    <div class="gh-logo">🧬 BIO MONOPOLY</div>
+    <div class="gh-center">
+      <span class="gh-turn-label">Кезек:</span>
+      <span class="gh-turn-name" id="gh-turn-name">—</span>
+    </div>
+    <div class="gh-actions">
+      <button class="gh-rules-btn" onclick="openRulesModal()">📋 Ережелер</button>
+      <button class="gh-end" onclick="endGame()">⏹ Аяқтау</button>
+    </div>
+  </div>
+  <div class="game-body">
+    <div class="side-panel" id="left-panel">
+      <div class="sp-header">1-ші команда(лар)</div>
+      <div id="left-team-cards"></div>
+    </div>
+    <div class="board-area">
+      <div class="board-container">
+        <div class="board" id="board"></div>
+        <div class="center-controls" id="center-controls">
+          <div class="dice-face" id="dice-face">🎲</div>
+          <div class="center-controls-btns">
+            <button class="dice-btn" id="dice-btn" onclick="rollDice()">🎲 Кубик тастау</button>
+            <button class="show-question-btn" id="show-q-btn" onclick="showQuestion()">❓ Сұрақты көру</button>
+            <button class="skip-btn" id="skip-btn" onclick="doSkip()">⏭ Токсин — өткізу</button>
+          </div>
+          <div id="effect-area"></div>
+        </div>
+        <div class="center-question-card" id="cqc">
+          <div class="cqc-top">
+            <span class="cqc-badge" id="cqc-badge">А деңгейі</span>
+            <span class="cqc-cell" id="cqc-cell">—</span>
+            <span class="cqc-pts" id="cqc-pts">+1</span>
+          </div>
+          <div class="cqc-banner" id="cqc-banner">
+            <span id="cqc-banner-dot" style="width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0"></span>
+            <span id="cqc-banner-name" style="margin-left:4px">—</span>
+            <span style="font-size:12px;opacity:.6;margin-left:4px">жауап береді</span>
+          </div>
+          <div class="cqc-timer-wrap"><div class="cqc-timer-bar" id="cqc-timer-bar"></div></div>
+          <div class="cqc-question" id="cqc-question">—</div>
+          <div id="cqc-options-area"></div>
+          <div class="match-pairs-display" id="cqc-pairs-display" style="display:none"></div>
+          <div class="cqc-answer" id="cqc-answer">
+            <div class="cqc-answer-label">Дұрыс жауап</div>
+            <div class="cqc-answer-text" id="cqc-answer-text"></div>
+          </div>
+          <div class="cqc-actions" id="cqc-actions">
+            <button class="btn-show-q" onclick="revealAnswer()">👁 Жауапты ашу</button>
+            <button class="btn-correct" onclick="judge(true)">✓ Дұрыс</button>
+            <button class="btn-wrong" onclick="judge(false)">✗ Қате</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-panel right" id="right-panel">
+      <div class="sp-header">2-ші команда(лар)</div>
+      <div id="right-team-cards"></div>
+    </div>
+  </div>
+  <div id="log-area" style="display:none"></div>
+</div>
+
+<!-- RESULT -->
+<div id="result-screen" class="screen">
+  <div class="result-box">
+    <div class="trophy">🏆</div>
+    <div class="winner-label">Жеңімпаз команда</div>
+    <div class="winner-name" id="res-name">—</div>
+    <div class="winner-pts" id="res-pts">0 балл</div>
+    <div class="podium" id="podium"></div>
+    <button class="play-again" onclick="resetGame()">🔄 Қайта ойнау</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// PALETTE
+// ============================================================
+const PALETTE=[
+  {hex:'#ef4444'},{hex:'#22c55e'},{hex:'#3b82f6'},{hex:'#f59e0b'},
+  {hex:'#a855f7'},{hex:'#ec4899'},{hex:'#14b8a6'},{hex:'#f97316'},
+];
+const DFLT_COLORS=['#ef4444','#22c55e','#3b82f6','#f59e0b'];
+const DFLT_NAMES=['Команда 1','Команда 2','Команда 3','Команда 4'];
+const WIN_SCORE=50;
+
+// ============================================================
+// 60 CELLS — 18 easy(green) + 18 med(yellow) + 14 hard(red) + 10 special
+// ============================================================
+const CELLS=[
+  // 0
+  {id:0,name:'СТАРТ ⭐',type:'corner',icon:'⭐',pts:0},
+  // 1-5 easy
+  {id:1,name:'Жасуша теориясы',type:'easy',icon:'📖',pts:1},
+  {id:2,name:'Жасуша құрылысы',type:'easy',icon:'🔬',pts:1},
+  {id:3,name:'Гиалоплазма',type:'easy',icon:'💧',pts:1},
+  {id:4,name:'ЗЕРТХАНА',type:'special',icon:'🔬',special:'lab',pts:0},
+  {id:5,name:'Плазм. мембрана',type:'med',icon:'🫧',pts:2},
+  // 6-10
+  {id:6,name:'Рибосома',type:'easy',icon:'⚙️',pts:1},
+  {id:7,name:'Ядрошық',type:'easy',icon:'🔵',pts:1},
+  {id:8,name:'ВИРУС',type:'special',icon:'🦠',special:'virus',pts:0},
+  {id:9,name:'Митохондрия',type:'med',icon:'⚡',pts:2},
+  {id:10,name:'Полисома',type:'easy',icon:'🔗',pts:1},
+  // 11-15
+  {id:11,name:'МУТАЦИЯ',type:'special',icon:'🧬',special:'mutation',pts:0},
+  {id:12,name:'Гольджи жиынт.',type:'med',icon:'📦',pts:2},
+  {id:13,name:'Лизосома',type:'easy',icon:'🗑️',pts:1},
+  {id:14,name:'Диктиосома',type:'easy',icon:'🥞',pts:1},
+  {id:15,name:'Хлоропласт',type:'med',icon:'🌿',pts:2},
+  // 16-20
+  {id:16,name:'Жасуша орталығы',type:'easy',icon:'🎯',pts:1},
+  {id:17,name:'Автофагия',type:'easy',icon:'♻️',pts:1},
+  {id:18,name:'ТОКСИН',type:'special',icon:'☠️',special:'toxin',pts:0},
+  {id:19,name:'ЭПТ',type:'med',icon:'🌀',pts:2},
+  {id:20,name:'Жасуша қабырғасы',type:'easy',icon:'🧱',pts:1},
+  // 21-25
+  {id:21,name:'Лигнин',type:'easy',icon:'🪵',pts:1},
+  {id:22,name:'Кроссинговер',type:'easy',icon:'✂️',pts:1},
+  {id:23,name:'ТАСЫМАЛ',type:'special',icon:'🔄',special:'transport',pts:0},
+  {id:24,name:'Вакуоль',type:'med',icon:'💠',pts:2},
+  {id:25,name:'АТФ синтетаза',type:'easy',icon:'⚡',pts:1},
+  // 26-30
+  {id:26,name:'Белок синтезі',type:'hard',icon:'🏗️',pts:3},
+  {id:27,name:'Ядро',type:'med',icon:'🔮',pts:2},
+  {id:28,name:'Хромосома',type:'med',icon:'🧵',pts:2},
+  {id:29,name:'ЗЕРТХАНА',type:'special',icon:'🔬',special:'lab',pts:0},
+  {id:30,name:'Мейоз',type:'hard',icon:'🔀',pts:3},
+  // 31-35
+  {id:31,name:'Эндоцитоз',type:'med',icon:'🚪',pts:2},
+  {id:32,name:'Пероксисома',type:'easy',icon:'🟠',pts:1},
+  {id:33,name:'Органоид',type:'hard',icon:'🏛️',pts:3},
+  {id:34,name:'ВИРУС',type:'special',icon:'🦠',special:'virus',pts:0},
+  {id:35,name:'Цитоқаңқа',type:'med',icon:'🕸️',pts:2},
+  // 36-40
+  {id:36,name:'Тонопласт',type:'easy',icon:'🫙',pts:1},
+  {id:37,name:'Кардиолипин',type:'hard',icon:'❤️',pts:3},
+  {id:38,name:'Гетерохроматин',type:'hard',icon:'🧫',pts:3},
+  {id:39,name:'МУТАЦИЯ',type:'special',icon:'🧬',special:'mutation',pts:0},
+  {id:40,name:'Фотосинтез',type:'med',icon:'☀️',pts:2},
+  // 41-45
+  {id:41,name:'Мембрана тасымал',type:'hard',icon:'🚂',pts:3},
+  {id:42,name:'Жасуша цикл',type:'hard',icon:'🔁',pts:3},
+  {id:43,name:'Транскрипция',type:'hard',icon:'📝',pts:3},
+  {id:44,name:'ТОКСИН',type:'special',icon:'☠️',special:'toxin',pts:0},
+  {id:45,name:'Плазмид',type:'med',icon:'🧿',pts:2},
+  // 46-50
+  {id:46,name:'Микрофиламент',type:'med',icon:'🧶',pts:2},
+  {id:47,name:'Лейкопласт',type:'med',icon:'⬜',pts:2},
+  {id:48,name:'Хромопласт',type:'med',icon:'🟠',pts:2},
+  {id:49,name:'ТАСЫМАЛ',type:'special',icon:'🔄',special:'transport',pts:0},
+  {id:50,name:'Апоптоз',type:'hard',icon:'💀',pts:3},
+  // 51-55
+  {id:51,name:'Нуклеосома',type:'hard',icon:'⚽',pts:3},
+  {id:52,name:'Трансляция',type:'hard',icon:'🔤',pts:3},
+  {id:53,name:'Осмос',type:'med',icon:'💦',pts:2},
+  {id:54,name:'Диффузия',type:'easy',icon:'🌊',pts:1},
+  {id:55,name:'Эндоплазмалық тор',type:'med',icon:'🕸️',pts:2},
+  // 56-59
+  {id:56,name:'Пластидтер',type:'med',icon:'🌈',pts:2},
+  {id:57,name:'Жасуша бөлінуі',type:'hard',icon:'✂️',pts:3},
+  {id:58,name:'ЯДРО САРАЙЫ',type:'special',icon:'👑',special:'hard_cell',pts:3},
+  {id:59,name:'Стерол',type:'med',icon:'🧪',pts:2},
+];
+
+// ============================================================
+// QUESTIONS — А (easy, 1 correct), В (med, multiple correct), С (hard, matching)
+// ============================================================
+let selectedChapter = 'jasushalyq';
+const CHAPTER_NAMES = {jasushalyq:'Жасушалық биология', tukym:'Тұқымқуалаушылық және өзгергіштік'};
+function selectChapter(id){
+  selectedChapter = id;
+  document.querySelectorAll('.chapter-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('chap-'+id).classList.add('sel');
+  document.querySelector('.logo-sub').textContent = CHAPTER_NAMES[id] || id;
+}
+
+const ALL_QS = {
+jasushalyq: {
+  // А деңгейі — 1 дұрыс жауап (тест)
+  easy: [
+    {q:'Органоидтары мен қосындыларынан айырылған цитоплазма бөлігі:', opts:['а) вакуоль','b) кариоплазма','c) гиалоплазма','d) саркоплазма'], correct:[2], answer:'c) гиалоплазма'},
+    {q:'3 санымен көрсетілген органоидтың сыртын қаптайтын ерекше мембрана:', opts:['а) фосфолипид','b) шырышты капсула','c) цитоқаңқа','d) тонопласт'], correct:[3], answer:'d) тонопласт'},
+    {q:'Рибосомалар мен РНК синтезделетін орын:', opts:['a) цитоплазма','b) ядрошық','c) ЭПТ','d) митохондрия'], correct:[1], answer:'b) ядрошық'},
+    {q:'Фосфолипидтердің биомолекулалық қабаттары түзіледі:', opts:['a) жасуша қабырғасы','b) центриоль','c) рибосома','d) гольджи жиынтығы'], correct:[0], answer:'a) жасуша қабырғасы'},
+    {q:'Митохондрияның ішкі мембранасының ерекше фосфолипидтері:', opts:['a) сфинголепин','b) фосфолипид','c) митолипин','d) кардиолипин'], correct:[3], answer:'d) кардиолипин'},
+    {q:'Рибосомалардың гиалоплазмада бір-бірден топталып орналасуы аталады:', opts:['a) центросома','b) полисома','c) везикула','d) диктиосома'], correct:[1], answer:'b) полисома'},
+    {q:'Митохондрия ішкі кеңістігі:', opts:['a) криста','b) матрикс','c) мембранааралық кеңістік','d) АТФ синтетеза'], correct:[2], answer:'c) мембранааралық кеңістік'},
+    {q:'Қажетсіз жасуша құрылымдарын жою процесі:', opts:['a) автолиз','b) лизис','c) автофагия','d) экзоцитоз'], correct:[2], answer:'c) автофагия'},
+    {q:'Құбылмалы органоид деп аталады:', opts:['a) вакуоль','b) митохондрия','c) ядро','d) рибосома'], correct:[1], answer:'b) митохондрия'},
+    {q:'Шванн мен Шлейден ұсынған теория:', opts:['a) ұлпалық','b) кариотиптік','c) хромосомалық','d) жасушалық'], correct:[3], answer:'d) жасушалық'},
+    {q:'Цитоқаңқаның қалыптасуына қатысады:', opts:['a) жасуша қабырғасы','b) митохондрия','c) жасуша орталығы','d) цитоплазма'], correct:[2], answer:'c) жасуша орталығы'},
+    {q:'Гольджи жиынтығының құрылымдық функционалды бірлігі:', opts:['a) полисома','b) мезосома','c) центросома','d) диктиосома'], correct:[3], answer:'d) диктиосома'},
+    {q:'Диатом балдырлар өз қабырғасын синтездейді:', opts:['a) лазуриттен','b) субериннен','c) кремнеземнен','d) гемицеллюлоза'], correct:[2], answer:'c) кремнеземнен'},
+    {q:'АТФ синтетазасына жауапты органоид:', opts:['a) митохондрия','b) хлоропласт','c) лизосома','d) ЭПТ'], correct:[0], answer:'a) митохондрия'},
+    {q:'Өсімдіктің сүректенуіне жауапты қабат:', opts:['a) суберин','b) кутин','c) лигнин','d) балауыз'], correct:[2], answer:'c) лигнин'},
+    {q:'Жасушаның экспортты жүйесі:', opts:['a) ядро','b) мембрана','c) ЭПТ','d) Гольджи жиынтығы'], correct:[3], answer:'d) Гольджи жиынтығы'},
+    {q:'Гомологты хромосомалар бөліктерінің алмасуы:', opts:['a) конъюгация','b) дефишенсия','c) кроссинговер','d) дупликация'], correct:[2], answer:'c) кроссинговер'},
+    {q:'Құрамында хроматині бар нуклеоплазмадан тұратын органоид:', opts:['a) ядро','b) цитоплазма','c) мембрана','d) вакуоль'], correct:[0], answer:'a) ядро'},
+    {q:'Қарапайымдылардың бөліну түрі:', opts:['a) митоз','b) мейоз','c) амитоз','d) бүршіктену'], correct:[2], answer:'c) амитоз'},
+    {q:'Фагоцитоз, пиноцитозды жүзеге асырады:', opts:['a) вакуоль','b) цитоплазма','c) мембрана','d) лизосома'], correct:[2], answer:'c) мембрана'},
+  ],
+  // В деңгейі — бірнеше дұрыс жауап
+  med: [
+    {q:'Көбею қабілетінен айырылған жасушалар:', opts:['1) Лейкоцит','2) Тромбоцит','3) Эритроцит','4) Лимфоцит','5) Эозинофил','6) Базофил'], correct:[0,1], answer:'1) Лейкоцит, 2) Тромбоцит'},
+    {q:'Барлық эукариоттық жасушалардың маңызды бөліктері:', opts:['1) Қабықша','2) Ядро','3) Рибосома','4) Вакуоль','5) Цитоплазма','6) Мезосома'], correct:[0,1,4], answer:'1) Қабықша, 2) Ядро, 5) Цитоплазма'},
+    {q:'Гиалоплазманың дисперсті фазасы:', opts:['1) Нәруыз','2) Су','3) Май','4) Мицеллар','5) Актин','6) Лизосома'], correct:[0,2,3], answer:'1) Нәруыз, 3) Май, 4) Мицеллар'},
+    {q:'Бір мембраналы органоидтар:', opts:['А) Митохондрия','В) Ядро','С) Лизосома','Д) ЭПТ','Е) Рибосома','F) Вакуоль'], correct:[2,3,5], answer:'С) Лизосома, Д) ЭПТ, F) Вакуоль'},
+    {q:'Жасуша қабықшасының сыртқы бетіне жинақталады:', opts:['А) хитин','В) лигнин','С) стерилин','Д) кутин','Е) суберин','F) балауыз'], correct:[3,4,5], answer:'Д) кутин, Е) суберин, F) балауыз'},
+    {q:'Микрофиламенттер туралы дұрыс тұжырым:', opts:['А) жеке глобулалы және жіпше түрінде','В) тубулин нәруызынан құралған','С) маторлы нәруыздар кездеседі','Д) актин нәруызынан құралған','Е) микротүтікшеден жуанырақ','F) микротүтікшеден жіңішке'], correct:[0,3,5], answer:'А, Д, F'},
+    {q:'Гольджи аппаратының жасуша мембранасына қараған жағы аталады:', opts:['А) қалыптастырушы','В) проксимальды','С) жетілген','Д) цисполюс','Е) дистальды','F) трансполюс'], correct:[2,4,5], answer:'С) жетілген, Е) дистальды, F) трансполюс'},
+    {q:'Пероксисомалар туралы сәйкес тұжырым:', opts:['А) митохондриялардың атасы','В) бүршіктелу арқылы көбейеді','С) бөліну арқылы көбейеді','Д) ас қорыту вакуольдері','Е) ферменттері ЭПТ мен Гольджида түзіледі','F) ферменттері ЭПТ және гиалоплазмада түзіледі'], correct:[0,1,5], answer:'А, В, F'},
+    {q:'Өсімдік вакуольдерінің қызметтері:', opts:['А) су жинақтау','В) тургор қысымын ұстап тұру','С) суда ерігіш метаболиттерді жинақтау','Д) нәруыздарды, липидтерді секрециялау','Е) жасушалардан түзінділерді бөліп шығару','F) қозғалыстарды қамтамасыз ету'], correct:[0,1,2], answer:'А, В, С'},
+    {q:'Хромопласттар кездесетін жеміс:', opts:['A) алма','B) қызанақ','C) банан','D) алмұрт','E) шетен','F) асқабақ'], correct:[1,4,5], answer:'B) қызанақ, E) шетен, F) асқабақ'},
+    {q:'Вакуольдердің түзілуіне қатысатын органоид:', opts:['A) ЭПТ','B) ядро','C) лизосома','D) гольджи','E) митохондрия','F) гиалоплазма'], correct:[0,3], answer:'A) ЭПТ, D) гольджи'},
+    {q:'Ядро ламинасына тән ақпараттар:', opts:['A) рРНҚ туралы ақпарат хромосомада','B) дөңгелек тығыз денешік','C) нуклеопротеидтік құрылым','D) ядро пішінін сақтайды','E) хромотин жіпшелерін орналастырады','F) генетикалық материалдардың тіршілік формасы'], correct:[3,4], answer:'D, E'},
+    {q:'Гетерохроматинге тән тұжырымдар:', opts:['A) генетикалық белсенді','B) микроскопта көрінбейді','C) ширатылған','D) әлсіз боялады','E) белсенді емес','F) ширатылмаған'], correct:[2,4], answer:'C) ширатылған, E) белсенді емес'},
+    {q:'Өсімдікте кездесетін стероидтер:', opts:['A) холестерол','B) ситостерол','C) стигмастерол','D) сфигостерол','E) тестостерон','F) эстроген'], correct:[1,2], answer:'B) ситостерол, C) стигмастерол'},
+    {q:'Жасуша мембранасының сұйық-мозаикалық моделін ұсынған:', opts:['A) Мишер','B) Фишер','C) Сингер','D) Дарвин','E) Николсон','F) Линней'], correct:[2,4], answer:'C) Сингер, E) Николсон'},
+    {q:'Мембранасының құрамында гликолипидтер көп жасуша:', opts:['A) ми жасушалары','B) бұлшықет жасушалары','C) эритроцит жасушалары','D) жыныс жасушалары','E) эпителий жасушалары','F) сүйек жасушалары'], correct:[0,2], answer:'A) ми жасушалары, C) эритроцит жасушалары'},
+    {q:'ЭПТ-ның түйіршікті түрінің қызметі:', opts:['A) липид синтездеу','B) нәруыз синтездеу','C) заттарды тасымалдау','D) фотосинтез','E) уыттарды залалсыздандыру','F) АТФ синтезі'], correct:[1,2], answer:'B) нәруыз синтездеу, C) заттарды тасымалдау'},
+    {q:'Саңырауқұлақтардың қабырғасын құрайтын компонент:', opts:['A) глюкан','B) целлюлоза','C) пектинді заттар','D) хитин','E) муреин','F) гемицеллюлоза'], correct:[0,3], answer:'A) глюкан, D) хитин'},
+    {q:'Гемицеллюлозаның қарапайым целлюлозадан айырмашылығы:', opts:['A) мономері ұзын','B) мономері қысқа','C) тармақталмаған','D) тармақталған','E) моносахарид','F) май тәріздес зат'], correct:[1,3], answer:'B) мономері қысқа, D) тармақталған'},
+    {q:'Жасушадағы қандай құрылым зақымданса нәруыз синтезі бірден тоқтайды:', opts:['A) лизосома','B) рибосома','C) гольджи жиынтығы','D) вакуоль','E) центриоль','F) ЭПТ'], correct:[1], answer:'B) рибосома'},
+  ],
+  // С деңгейі — сәйкестендіру
+  hard: [
+    {q:'Сәйкестендіріңіз: Органоид – қызметі\n1. Рибосома\n2. Митохондрия\n3. Гольджи жиынтығы\n4. Лизосома\n5. Түйіршікті ЭПТ',
+     matchLeft:['1. Рибосома','2. Митохондрия','3. Гольджи жиынтығы','4. Лизосома','5. Түйіршікті ЭПТ'],
+     matchRight:['A) Нәруызды модификациялау және қаптау','B) АТФ синтездеу','C) Нәруыз синтездеу','D) Жасушаішілік қорыту','E) Нәруызды тасымалдау'],
+     correctPairs:[[0,2],[1,1],[2,0],[3,3],[4,4]],
+     answer:'1→C, 2→B, 3→A, 4→D, 5→E'},
+    {q:'Сәйкестендіріңіз: Процесс – орындалатын жері\n1. Трансляция\n2. Транскрипция\n3. Жасушалық тыныс алу\n4. Фотосинтез',
+     matchLeft:['1. Трансляция','2. Транскрипция','3. Тыныс алу','4. Фотосинтез'],
+     matchRight:['A) Рибосома','B) Ядро','C) Митохондрия','D) Хлоропласт'],
+     correctPairs:[[0,0],[1,1],[2,2],[3,3]],
+     answer:'1→A(Рибосома), 2→B(Ядро), 3→C(Митохондрия), 4→D(Хлоропласт)'},
+    {q:'Сәйкестендіріңіз: Тасымал түрі – сипаттама\n1. Диффузия\n2. Осмос\n3. Белсенді тасымал\n4. Фагоцитоз',
+     matchLeft:['1. Диффузия','2. Осмос','3. Белсенді тасымал','4. Фагоцитоз'],
+     matchRight:['A) Су молекулаларының қозғалысы','B) Энергиясыз жүреді','C) Энергия жұмсалады','D) Ірі бөлшектерді жұту'],
+     correctPairs:[[0,1],[1,0],[2,2],[3,3]],
+     answer:'1→B(Энергиясыз), 2→A(Су қозғалысы), 3→C(Энергия жұмсалады), 4→D(Ірі бөлшек)'},
+    {q:'Сәйкестендіріңіз: Органоид – ДНҚ бар/жоқ\n1. Ядро\n2. Митохондрия\n3. Рибосома\n4. Лизосома',
+     matchLeft:['1. Ядро','2. Митохондрия','3. Рибосома','4. Лизосома'],
+     matchRight:['A) ДНҚ бар','B) ДНҚ жоқ'],
+     correctPairs:[[0,0],[1,0],[2,1],[3,1]],
+     answer:'ДНҚ бар: Ядро(1), Митохондрия(2) | ДНҚ жоқ: Рибосома(3), Лизосома(4)'},
+    {q:'Пластидтердің сипаттамасымен сәйкестендір:\nА) Хлоропласт\nВ) Хромопласт\nС) Лейкопласт',
+     matchLeft:['A) Хлоропласт','B) Хромопласт','C) Лейкопласт'],
+     matchRight:['1. Тамырда, қоректік зат жинақтайды','2. Жасыл түсті, фотосинтез','3. Түрлі түсті','4. Жәндіктерді еліктетеді','5. Ақ түсті'],
+     correctPairs:[[0,1],[1,2],[2,0]],
+     answer:'Хлоропласт→2(жасыл, фотосинтез), Хромопласт→3(түрлі түсті), Лейкопласт→1(тамырда)'},
+    {q:'Сәйкестендіріңіз:\n1. Хлорофилл болады\n2. Мембраналардан түзілген түтікшелерден тұрады',
+     matchLeft:['1. Хлорофилл болады','2. Мембраналар түтікшесі'],
+     matchRight:['а) Хлоропласт','в) Рибосома','с) Жасуша орталығы','д) ЭПТ'],
+     correctPairs:[[0,0],[1,3]],
+     answer:'1→а(Хлоропласт), 2→д(ЭПТ)'},
+    {q:'Сәйкестендіріңіз:\n1. Бір мембраналы\n2. Қос мембраналы',
+     matchLeft:['1. Бір мембраналы','2. Қос мембраналы'],
+     matchRight:['а) Рибосома','в) Пластидтер','с) Гольджи жиынтығы','д) Жасуша орталығы'],
+     correctPairs:[[0,2],[1,1]],
+     answer:'1→с(Гольджи жиынтығы), 2→в(Пластидтер)'},
+    {q:'Сәйкестендіріңіз:\n1. Тегіс ЭПТ\n2. Түйіршікті ЭПТ',
+     matchLeft:['1. Тегіс ЭПТ','2. Түйіршікті ЭПТ'],
+     matchRight:['а) Нәруыздарды синтездейді','в) Бейорганикалық заттарды синтездейді','с) Көмірсулар мен липидтерді синтездейді','д) Органикалық заттарды синтездейді'],
+     correctPairs:[[0,2],[1,0]],
+     answer:'Тегіс ЭПТ→с(Көмірсулар мен липидтер), Түйіршікті ЭПТ→а(Нәруыздарды синтездейді)'},
+    {q:'Сәйкестендіріңіз:\n1. Ядро\n2. Рибосомалар',
+     matchLeft:['1. Ядро','2. Рибосомалар'],
+     matchRight:['а) Нәруыз синтезі','в) Жасушаны энергиямен қамтамасыз ету','с) Тұқым қуалау ақпаратын сақтау','д) Заттарды ыдырату'],
+     correctPairs:[[0,2],[1,0]],
+     answer:'1.Ядро→с(Тұқым қуалау ақпараты), 2.Рибосомалар→а(Нәруыз синтезі)'},
+    {q:'Сәйкестендіріңіз:\n1. Пластидтер\n2. Жасуша орталығы',
+     matchLeft:['1. Пластидтер','2. Жасуша орталығы'],
+     matchRight:['а) Нәруыз ыдырату','в) Фотосинтезге қатысу','с) Жасушаның бөлінуіне қатысу','д) АТФ синтездеу'],
+     correctPairs:[[0,1],[1,2]],
+     answer:'1.Пластидтер→в(Фотосинтез), 2.Жасуша орталығы→с(Бөлінуге қатысу)'},
+    {q:'Сәйкестендіріңіз:\n1. Жасуша мембранасы\n2. Цитоплазма',
+     matchLeft:['1. Жасуша мембранасы','2. Цитоплазма'],
+     matchRight:['а) Заттардың өтуін реттейді','в) Тұқым қуалау ақпаратын сақтайды','с) Фотосинтез жүргізеді','д) Органоидтерді байланыстырады'],
+     correctPairs:[[0,0],[1,3]],
+     answer:'1.Мембрана→а(Заттардың өтуін реттейді), 2.Цитоплазма→д(Органоидтерді байланыстырады)'},
+    {q:'Сәйкестендіріңіз:\n1. Өсімдік жасушасында болады\n2. Жануар жасушасында болмайды',
+     matchLeft:['1. Өсімдікте бар','2. Жануарда жоқ'],
+     matchRight:['а) Жасуша қабырғасы','в) Центриоль','с) Пластид','д) Рибосома'],
+     correctPairs:[[0,2],[1,0]],
+     answer:'1.Өсімдікте бар→с(Пластид), 2.Жануарда жоқ→а(Жасуша қабырғасы)'},
+    {q:'Сәйкестендіріңіз:\n1. Екі суббірліктен тұрады\n2. Кристалары бар органоид',
+     matchLeft:['1. Екі суббірліктен тұрады','2. Кристалары бар'],
+     matchRight:['а) Митохондрия','в) ЭПТ','с) Лизосома','д) Рибосома'],
+     correctPairs:[[0,3],[1,0]],
+     answer:'1.Екі суббірлік→д(Рибосома), 2.Кристалары бар→а(Митохондрия)'},
+    {q:'Сәйкестендіріңіз:\n1. Цитоплазмада түтікшелер жүйесін түзеді\n2. Ішінде хроматин болады',
+     matchLeft:['1. Цитоплазмада түтікшелер','2. Ішінде хроматин болады'],
+     matchRight:['а) ЭПТ','в) Рибосома','с) Ядро','д) Гольджи жиынтығы'],
+     correctPairs:[[0,0],[1,2]],
+     answer:'1.Түтікшелер жүйесі→а(ЭПТ), 2.Хроматин→с(Ядро)'},
+  ]
+}, // end jasushalyq
+
+tukym: {
+  // А деңгейі — 1 дұрыс жауап
+  easy: [
+    {q:'Тұқым қуалаушылық пен өзгергіштіктің заңдылықтарын зерттейтін ғылым:', opts:['а) эволюция','b) генетика','c) эмбриология','d) анатомия'], correct:[1], answer:'b) генетика'},
+    {q:'18-жұп хромосомасының трисомиясы көрінетін синдром:', opts:['а) Даун синдромы','b) Эдвардс синдромы','c) Патау синдромы','d) Клайнфельтер синдромы'], correct:[1], answer:'b) Эдвардс синдромы'},
+    {q:'1855 жылы Л.Даун сипаттап жазған хромосомалық синдром түрі:', opts:['а) Патау синдромы','b) Даун синдромы','c) Эдвардс синдромы','d) Шерешевский-Тернер синдромы'], correct:[1], answer:'b) Даун синдромы'},
+    {q:'Тек жаңа туған қыз балаларда ғана кездесетін хромосомалық синдром:', opts:['а) Даун синдромы','b) Патау синдромы','c) Эдвардс синдромы','d) Шерешевский-Тернер синдромы'], correct:[3], answer:'d) Шерешевский-Тернер синдромы'},
+    {q:'Оларды оқып-үйретуге болады, бірақ жазуға, санауға үйрету мүмкін емес. Бұл қандай ауру?', opts:['а) Даун синдромы','b) Патау синдромы','c) Эдвардс синдромы','d) Шерешевский-Тернер синдромы'], correct:[0], answer:'а) Даун синдромы'},
+    {q:'Бойлары қысқа, иықтары кең, тек қыздар ауыратын хромосомалық ауру:', opts:['а) Патау синдромы','b) Клайнфельтер синдромы','c) Эдвардс синдромы','d) Шерешевский-Тернер синдромы'], correct:[3], answer:'d) Шерешевский-Тернер синдромы'},
+    {q:'Тең иықты хромосомалар:', opts:['а) метацентрлік','b) субметацентрлік','c) акроцентрлік','d) телоцентрлік'], correct:[0], answer:'а) метацентрлік'},
+    {q:'Эдвардс синдромы кезінде ерекше орналасатын саусақтар:', opts:['а) 1-2 саусақтары','b) 2-5 саусақтары','c) 3-4 саусақтары','d) 2-3 саусақтары'], correct:[1], answer:'b) 2-5 саусақтары'},
+    {q:'Генетикалық аурулардың алдын алу үшін хромосомаларды зерттейтін әдіс:', opts:['а) цитогенетикалық әдіс','b) егіздік әдіс','c) генеалогиялық әдіс','d) биохимиялық әдіс'], correct:[0], answer:'а) цитогенетикалық әдіс'},
+    {q:'Хромосомаішілік мутацияларға жатады:', opts:['а) транслокация','b) инсерция','c) делеция','d) полиплоидия'], correct:[2], answer:'c) делеция'},
+    {q:'Молекулалық деңгейде өтіп, микроскоп арқылы көрінбейтін мутация:', opts:['а) геномдық мутация','b) хромосомалық мутация','c) нүктелік (гендік) мутация','d) цитоплазмалық мутация'], correct:[2], answer:'c) нүктелік (гендік) мутация'},
+    {q:'Генетиканың негізін салушы чех ғалымы:', opts:['а) Ч.Дарвин','b) У.Бэтсон','c) Г.Мендель','d) Т.Морган'], correct:[2], answer:'c) Г.Мендель'},
+    {q:'Г.Мендель тәжірибесіне объект ретінде алған ағза:', opts:['а) дрозофила шыбыны','b) құлпынай','c) беде','d) асбұршақ'], correct:[3], answer:'d) асбұршақ'},
+    {q:'Г.Мендельдің бірінші заңының атауы:', opts:['а) ажырау заңы','b) тәуелсіз тұқым қуалау заңы','c) генотип заңы','d) біркелкілік заңы'], correct:[3], answer:'d) біркелкілік заңы'},
+    {q:'Тек бір белгімен өзгешеленетін будандастыру түрі:', opts:['а) моногибридті','b) фенотипті','c) дигибридті','d) гетеросомалы'], correct:[0], answer:'а) моногибридті'},
+    {q:'Г.Мендельдің бірінші заңының мәні:', opts:['а) 3:1 ажырау','b) бірінші ұрпақ бірдей болады','c) 1:2:1 қатынас','d) гаметалар таза күйінде таралады'], correct:[1], answer:'b) бірінші ұрпақ бірдей болады'},
+    {q:'Генетикалық белгілердің сырттай көрінісі:', opts:['а) генотип','b) фенотип','c) аллель','d) гибрид'], correct:[1], answer:'b) фенотип'},
+    {q:'Гаметалардың тазалық заңының мағынасы:', opts:['а) барлық гендер доминантты','b) әр гамета тек бір тұқымқуалайтын факторды таратады','c) барлық белгілер тәуелді','d) гаметалар өздігінен тозаңданады'], correct:[1], answer:'b) әр гамета тек бір тұқымқуалайтын факторды таратады'},
+    {q:'Г.Мендельдің екінші заңының фенотиптік арақатынасы:', opts:['а) 3:1','b) 1:2:1','c) 2:2','d) 1:3'], correct:[0], answer:'а) 3:1'},
+    {q:'Зигота дегеніміз:', opts:['а) ұрықтанған жұмыртқа жасушасы','b) гендердің үйлесімі','c) жыныс жасушалары','d) гаметалардың қосылу үрдісі'], correct:[0], answer:'а) ұрықтанған жұмыртқа жасушасы'},
+  ],
+  // В деңгейі — бірнеше дұрыс жауап
+  med: [
+    {q:'Г.Мендельдің заңдарын көрсет:', opts:['1) біркелкілік','2) теңдессіздік','3) ажырау','4) доминанттылық','5) тәуелсіз тұқымқуалау','6) комплементарлық'], correct:[0,2,4], answer:'1) біркелкілік, 3) ажырау, 5) тәуелсіз тұқымқуалау'},
+    {q:'Аллельді емес гендердің өзара әрекеттесуінің түр(-лері):', opts:['1) толымсыз доминанттылық','2) кодоминаттылық','3) көпаллельділік','4) рецессивтілік','5) полимерия','6) комплементарлық'], correct:[4,5], answer:'5) полимерия, 6) комплементарлық'},
+    {q:'Плейотропия құбылысына мысал(-дар):', opts:['1) адамның шашының сары түсті гені','2) адамның тырнақ және тізе буынының кемістік гені','3) тышқанның сүйектеріндегі ақаулы гені','4) бұршақтың жасыл түсті гені','5) қызыл және ақ намазшамгүлдердің әрекеттесуі','6) ақ және қызыл раушандардың әрекеттесуі'], correct:[1,2], answer:'2) тырнақ-тізе кемістік, 3) тышқан сүйек ақауы'},
+    {q:'Эпистаз түр(-лерін) көрсет:', opts:['1) біркелкілік','2) гетерозиготалы','3) доминантты','4) рецессивті','5) комплементарлы','6) толымсыз'], correct:[2,3], answer:'3) доминантты, 4) рецессивті'},
+    {q:'Ген хромосомада орналасқан деп хромосомалық гипотезаны ұсынған ғалым(-дар):', opts:['1) Г.Мендель','2) Т.Бовери','3) Н.Нильсон-Эле','4) У.Бэтсон','5) У.Сеттон','6) Т.Морган'], correct:[1,4], answer:'2) Т.Бовери, 5) У.Сеттон'},
+    {q:'Полимериядағы белгілердің 9:7 қатынасында ажырауын ұсынған ғалым(-дар):', opts:['1) Н.Нильсон-Эле','2) Г.Мендель','3) У.Сеттон','4) Т.Морган','5) У.Бэтсон','6) Пеннет'], correct:[4,5], answer:'5) У.Бэтсон, 6) Пеннет'},
+    {q:'Аналығы гомогаметалы, ал аталығы гетерогаметалы ағза(-лар):', opts:['1) құстар','2) адам','3) қаракүйе','4) сүтқоректілер','5) көбелектер','6) пингвиндер'], correct:[1,3], answer:'2) адам, 4) сүтқоректілер'},
+    {q:'Жыныспен тіркескен тұқымқуалайтын ауру(-лар):', opts:['1) гемофилия','2) дальтонизм','3) жүрек ишемиясы','4) ІІ типті диабет','5) рахит','6) цистит'], correct:[0,1], answer:'1) гемофилия, 2) дальтонизм'},
+    {q:'Аналық гаметасы ХО болатын ағза(-лар):', opts:['1) дрозофила','2) қаракүйе','3) адам','4) шекшек','5) көбелек','6) қандала'], correct:[0,3], answer:'1) дрозофила, 4) шекшек'},
+    {q:'Жыныспен тіркескен белгілердің тұқым қуалау типінің белгіcі(-лері):', opts:['1) науқас ер адамнан тек қыздарына ғана беріледі','2) аурулар келесі ұрпақта У хромосомада көрінеді','3) науқас әйелден тек қыздарына беріледі','4) аурулар келесі ұрпақта Х хромосомада көрінеді','5) науқас әйелден әрі ұлдарына, әрі қыздарына беріледі','6) науқас еркектен әрі қыздарына, әрі ұлдарына беріледі'], correct:[0,4], answer:'1) ер адамнан қыздарына, 5) әйелден ұлдарына да, қыздарына да'},
+    {q:'Тұқымқуаламайтын өзгергіштіктің атауы(-лары):', opts:['1) статистикалық','2) мутациялық','3) генотиптік','4) модификациялық','5) фенотиптік','6) гендік'], correct:[3,4], answer:'4) модификациялық, 5) фенотиптік'},
+    {q:'Мутация тудыратын физикалық мутаген(-дер):', opts:['1) колхицин','2) радиоактивті сәулелер','3) вирус','4) химиялық қосылыстар','5) ультракүлгін сәулелер','6) зат алмасудың ыдырау өнімдері'], correct:[1,4], answer:'2) радиоактивті сәулелер, 5) ультракүлгін сәулелер'},
+    {q:'Хромосомалық мутация түр(-лері):', opts:['1) инверсия','2) инсерция','3) дефишенсия','4) транзиция','5) кетаалколоз','6) транзакция'], correct:[0,1,2], answer:'1) инверсия, 2) инсерция, 3) дефишенсия'},
+    {q:'Гендік мутация түр(-леріне) жатады:', opts:['1) инверсия','2) басылыңқы','3) дефишенсия','4) доминантты','5) жартылай доминантты','6) информосома'], correct:[1,3,4], answer:'2) басылыңқы, 4) доминантты, 5) жартылай доминантты'},
+    {q:'Адам генетикасын зерттеудегі биохимиялық әдістің айқындайтын мәселе(-лері):', opts:['1) ферменттердің зақымдануын','2) фенотиптегі белгінің орналасуына қоршаған орта әсерін','3) белгінің тұқымқуалау типін','4) әр алуан пенетранттықтан дәл еместік туындау','5) ферменттерді ағзаға енгізу арқылы ауруды жоюын','6) келесі ұрпақтардағы генетикалық аурулар санын'], correct:[0,4], answer:'1) ферменттердің зақымдануын, 5) ауруды жоюын'},
+    {q:'Біржұмыртқалы егіздер үшін дұрыс тұжырым(-дар):', opts:['1) тәуелсіз екі жұмыртқа жасушасынан дамиды','2) бір ұрықтан дамиды','3) хромосома жиынтығы әртүрлі','4) хромосома жиынтығы бірдей','5) монозиготалы','6) дизиготалы'], correct:[1,3,4], answer:'2) бір ұрықтан, 4) хромосома бірдей, 5) монозиготалы'},
+    {q:'Аутосомалы хромосомалар өзгеріске ұшырайтын хромосомалық аномалия(-лар):', opts:['1) Шерешевский-Тернер','2) Эдвардс','3) Клаинфельтер','4) Патау','5) Даун','6) рахит'], correct:[1,3,4], answer:'2) Эдвардс, 4) Патау, 5) Даун'},
+    {q:'Даун синдромының фенотиптік сипат(-тары):', opts:['1) мұрындарының түбі жалпақ','2) иектері тегіс','3) мойындары жуан','4) бойлары аласа','5) құстұмсық','6) шүйдесі тегіс'], correct:[0,1,3,5], answer:'1) мұрын жалпақ, 2) иек тегіс, 4) бой аласа, 6) шүйде тегіс'},
+    {q:'Шерешевский-Тернер синдромының белгі(-лері):', opts:['1) нәрестенің бала жолдасы кішкентай','2) жалғыз кіндік артериясы болады','3) мойындары қысқа және жуан','4) қолқа және өкпе артериялардың тарылуы','5) аяқ-қолы шамадан тыс ұзын','6) тырнақтары толық жетілмеген'], correct:[0,2,3,5], answer:'1,3,4,6'},
+    {q:'Полиплоидия жолымен көбейетін ағза(-лар):', opts:['1) амеба','2) аскарида','3) дрозофила','4) лямблия','5) жер құрты','6) көбелек'], correct:[0,3], answer:'1) амеба, 4) лямблия'},
+  ],
+  // С деңгейі — сәйкестендіру
+  hard: [
+    {q:'Сәйкестендіріңіз:\n1) Модификациялық өзгергіштік\n2) Реакция мөлшері\n3) Генотип\n4) Вариация қатары',
+     matchLeft:['1. Модификациялық өзгергіштік','2. Реакция мөлшері','3. Генотип','4. Вариация қатары'],
+     matchRight:['A) Белгілердің кішісінен үлкеніне қарай орналасуы','B) Организмнің өзгеру қабілеті','C) Белгілердің дамуын анықтайтын басты фактор','D) Сыртқы орта әсерінен болатын өзгеріс'],
+     correctPairs:[[0,3],[1,1],[2,2],[3,0]],
+     answer:'1→D, 2→B, 3→C, 4→A'},
+    {q:'Сәйкестендіріңіз:\n1) Вавилов\n2) Гофман мен Сенеборн\n3) Зияров\n4) Мендель',
+     matchLeft:['1. Вавилов','2. Гофман мен Сенеборн','3. Зияров','4. Мендель'],
+     matchRight:['A) Ұзақ модификация мутацияға айналуы мүмкін деді','B) Бидайдағы ұзақ модификацияны зерттеді','C) Тұқымқуалаушылық заңдарын ашты','D) Өзгерістің цитоплазма арқылы берілуін көрсетті'],
+     correctPairs:[[0,1],[1,3],[2,0],[3,2]],
+     answer:'1→B, 2→D, 3→A, 4→C'},
+    {q:'Сәйкестендіріңіз:\n1) Моногибридті будандастыру\n2) Дигибридті будандастыру\n3) Талдаушы будандастыру\n4) Толық емес доминанттылық',
+     matchLeft:['1. Моногибридті','2. Дигибридті','3. Талдаушы','4. Толық емес доминанттылық'],
+     matchRight:['A) Генотипті анықтау үшін жүргізіледі','B) Екі белгі бойынша будандастыру','C) Бір белгі бойынша будандастыру','D) Аралық белгі пайда болады'],
+     correctPairs:[[0,2],[1,1],[2,0],[3,3]],
+     answer:'1→C, 2→B, 3→A, 4→D'},
+    {q:'Сәйкестендіріңіз:\n1) Біркелкілік заңы\n2) Ажырау заңы\n3) F₂-дегі ажырау қатынасы\n4) Толық емес доминанттылықтағы қатынас',
+     matchLeft:['1. Біркелкілік заңы','2. Ажырау заңы','3. F₂ ажырау қатынасы','4. Толық емес доминанттылық'],
+     matchRight:['A) 1:2:1','B) Мендельдің II заңы','C) Барлық ұрпақ бірдей болады','D) 3:1'],
+     correctPairs:[[0,2],[1,1],[2,3],[3,0]],
+     answer:'1→C, 2→B, 3→D, 4→A'},
+    {q:'Сәйкестендіріңіз:\n1) Томас Морган\n2) Дрозофила шыбыны\n3) Кроссинговер\n4) І мейоз профазасы',
+     matchLeft:['1. Томас Морган','2. Дрозофила шыбыны','3. Кроссинговер','4. І мейоз профазасы'],
+     matchRight:['A) Айқасу жүретін кезең','B) Генетикалық зерттеуге қолайлы организм','C) Хромосомалардың айқасуы','D) Жыныспен тіркесуді зерттеген ғалым'],
+     correctPairs:[[0,3],[1,1],[2,2],[3,0]],
+     answer:'1→D, 2→B, 3→C, 4→A'},
+    {q:'Сәйкестендіріңіз:\n1) Жыныспен тіркескен тұқымқуалау\n2) Крисс-кросс тұқымқуалау\n3) Аутосомалық хромосомалар\n4) Жыныспен тіркескен аурулар',
+     matchLeft:['1. Жыныспен тіркескен тұқымқуалау','2. Крисс-кросс тұқымқуалау','3. Аутосомалық хромосомалар','4. Жыныспен тіркескен аурулар'],
+     matchRight:['A) Әкеден қызға, шешеден ұлға беріледі','B) Гемофилия, дальтонизм','C) Еркек пен әйелде бірдей болатын хромосомалар','D) Белгі жыныс хромосомасы арқылы беріледі'],
+     correctPairs:[[0,3],[1,0],[2,2],[3,1]],
+     answer:'1→D, 2→A, 3→C, 4→B'},
+    {q:'Сәйкестендіріңіз:\n1) Кодоминанттылық\n2) І қан тобы\n3) IV қан тобы\n4) Агглютиногендер',
+     matchLeft:['1. Кодоминанттылық','2. І қан тобы','3. IV қан тобы','4. Агглютиногендер'],
+     matchRight:['A) А және В','B) А мен В қатар көрінеді','C) Агглютиноген болмайды','D) Екі агглютиноген де болады'],
+     correctPairs:[[0,1],[1,2],[2,3],[3,0]],
+     answer:'1→B, 2→C, 3→D, 4→A'},
+    {q:'Сәйкестендіріңіз:\n1) Иогансен\n2) Вильсон\n3) Бовери мен Сеттон\n4) Морган',
+     matchLeft:['1. Иогансен','2. Вильсон','3. Бовери мен Сеттон','4. Морган'],
+     matchRight:['A) Хромосомалық теорияны дәлелдеді','B) «Ген» терминін енгізді','C) Хромосомалық гипотезаны ұсынды','D) Жынысты анықтаудың негізін қалады'],
+     correctPairs:[[0,1],[1,3],[2,2],[3,0]],
+     answer:'1→B, 2→D, 3→C, 4→A'},
+    {q:'Сәйкестендіріңіз:\n1) Плейотропия\n2) Комплементарлық\n3) Эпистаз\n4) Полимерия',
+     matchLeft:['1. Плейотропия','2. Комплементарлық','3. Эпистаз','4. Полимерия'],
+     matchRight:['A) Бір ген бірнеше белгіге әсер етеді','B) Бір ген екіншісін тежейді','C) Гендер бірігіп бір белгіні қалыптастырады','D) Жеке әсері байқалмайтын гендер'],
+     correctPairs:[[0,0],[1,3],[2,1],[3,2]],
+     answer:'1→A, 2→D, 3→B, 4→C'},
+    {q:'Сәйкестендіріңіз:\n1) Хуго де Фриз\n2) Мутагендер\n3) Физикалық мутагендер\n4) Химиялық мутагендер',
+     matchLeft:['1. Хуго де Фриз','2. Мутагендер','3. Физикалық мутагендер','4. Химиялық мутагендер'],
+     matchRight:['A) Колхицин, никотин қышқылы','B) Мутация терминін енгізді','C) Радиация, ультракүлгін сәуле','D) Мутация тудыратын факторлар'],
+     correctPairs:[[0,1],[1,3],[2,2],[3,0]],
+     answer:'1→B, 2→D, 3→C, 4→A'},
+    {q:'Сәйкестендіріңіз:\n1) Даун синдромы\n2) Патау синдромы\n3) Эдвардс синдромы\n4) Клайнфельтер синдромы',
+     matchLeft:['1. Даун синдромы','2. Патау синдромы','3. Эдвардс синдромы','4. Клайнфельтер синдромы'],
+     matchRight:['A) 21-хромосома трисомиясы','B) 13-хромосома трисомиясы','C) 18-хромосома трисомиясы','D) XXY жиынтығы'],
+     correctPairs:[[0,0],[1,1],[2,2],[3,3]],
+     answer:'1→A, 2→B, 3→C, 4→D'},
+    {q:'Сәйкестендіріңіз:\n1) Шерешевский-Тернер синдромы\n2) Клайнфельтер ауруы\n3) Эдвардс синдромы\n4) Даун синдромы',
+     matchLeft:['1. Шерешевский-Тернер','2. Клайнфельтер','3. Эдвардс','4. Даун'],
+     matchRight:['A) XO жиынтығы','B) Тек ер адамдарда болады','C) 18-хромосома трисомиясы','D) Ақыл-ойдың кем болуы'],
+     correctPairs:[[0,0],[1,1],[2,2],[3,3]],
+     answer:'1→A, 2→B, 3→C, 4→D'},
+    {q:'Сәйкестендіріңіз:\n1) Метацентрлік\n2) Субметацентрлік\n3) Акроцентрлік\n4) Телоцентрлік',
+     matchLeft:['1. Метацентрлік','2. Субметацентрлік','3. Акроцентрлік','4. Телоцентрлік'],
+     matchRight:['A) Центромера ортасында','B) Иықтары тең емес','C) Бір иығы өте қысқа','D) Центромера шетінде'],
+     correctPairs:[[0,0],[1,1],[2,2],[3,3]],
+     answer:'1→A, 2→B, 3→C, 4→D'},
+    {q:'Сәйкестендіріңіз:\n1) Гаметалар тазалығы ережесі\n2) Мейоз\n3) Митоз\n4) Гетерозигота',
+     matchLeft:['1. Гаметалар тазалығы','2. Мейоз','3. Митоз','4. Гетерозигота'],
+     matchRight:['A) Жыныс жасушалары түзіледі','B) Дене жасушалары бөлінеді','C) Аа генотипі','D) Аллельдер ажырайды'],
+     correctPairs:[[0,3],[1,0],[2,1],[3,2]],
+     answer:'1→D, 2→A, 3→B, 4→C'},
+    {q:'Сәйкестендіріңіз:\n1) Хлорофилдік мутация\n2) Митохондриялық мутация\n3) Плазмогендер\n4) Цитоплазмалық мутация',
+     matchLeft:['1. Хлорофилдік мутация','2. Митохондриялық мутация','3. Плазмогендер','4. Цитоплазмалық мутация'],
+     matchRight:['A) Пластидтер мен митохондрияларда болады','B) Хлорофилл өзгерісі','C) Тыныс алуға әсер етеді','D) Цитоплазмада жүреді'],
+     correctPairs:[[0,1],[1,2],[2,0],[3,3]],
+     answer:'1→B, 2→C, 3→A, 4→D'},
+  ]
+} // end tukym
+
+}; // end ALL_QS
+
+let QS = ALL_QS.jasushalyq;
+
+// ============================================================
+// BOARD LAYOUT — 60 cells around perimeter of larger board
+// We'll use a rectangular spiral: top row, right col, bottom row (reversed), left col (reversed)
+// Board: 14 columns x 8 rows grid visible, center is 12x6 cells
+// Layout: top=14 cells(0-13), right=6 cells(14-19), bottom=14 cells reversed(20-33), left=6 cells(34-39)
+// Total perimeter = 14+6+14+6 = 40... we need 60
+// So let's use 16x10 grid: top=16, right=8, bottom=16, left=8 = 48... still not 60
+// Let's use 18x12: top=18, right=10, bottom=18, left=10 = 56... 
+// Use 16x10 with corners shared: top=15, right=9, bottom=15, left=9 = 48... 
+// Best: use a 16x8 layout: top=16, right=6, bottom=16, left=6 = 44 (corners not double)
+// Actually simpler: top row = cols 0..15 (16 cells), right = rows 1..6 col15 (6), bottom = cols 15..0 (16), left = rows 6..1 col0 (6) => 44
+// For 60: top=16, right=10, bottom=16, left=10 but corners shared = (16-1)+(10-1)+(16-1)+(10-1)=60 ✓
+// Grid: 17 cols x 11 rows => perimeter = 16+10+16+10 = 52... 
+// (cols-1)*2 + (rows-1)*2 = 60 => cols+rows = 32, e.g. cols=17, rows=15: 32+28=60 ✓
+// Simpler: cols=17 (0..16), rows=13 (0..12): perimeter = (17-1)*2+(13-1)*2 = 32+24=56 nope
+// cols=16, rows=16: (15+15)*2=60 ✓ Square 16x16!
+
+// Build 60-cell path on 16x16 grid (only outer ring)
+// top: (0,0) to (0,15) = 16 cells (0..15)
+// right: (1,15) to (14,15) = 14 cells (16..29) 
+// bottom: (15,15) to (15,1) = 15 cells (30..44) going right to left, skip corner
+// Wait, let's be precise:
+// top row left->right: row=0, col=0..15 => 16 cells
+// right col top->bot: row=1..14, col=15 => 14 cells  
+// bottom row right->left: row=15, col=15..0 => 16 cells
+// left col bot->top: row=14..1, col=0 => 14 cells
+// Total = 16+14+16+14 = 60 ✓
+
+function buildLayout(){
+  const ROWS=16, COLS=16;
+  const grid = Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  let order=[];
+  // top: row0, col 0..15
+  for(let c=0;c<COLS;c++) order.push([0,c]);
+  // right: col15, row 1..14
+  for(let r=1;r<ROWS-1;r++) order.push([r,COLS-1]);
+  // bottom: row15, col 15..0
+  for(let c=COLS-1;c>=0;c--) order.push([ROWS-1,c]);
+  // left: col0, row 14..1
+  for(let r=ROWS-2;r>=1;r--) order.push([r,0]);
+  // assign cell ids
+  for(let i=0;i<60;i++) {
+    const [r,c]=order[i];
+    grid[r][c]=i;
+  }
+  return {grid,ROWS,COLS};
+}
+
+const {grid:LAYOUT, ROWS:GRID_ROWS, COLS:GRID_COLS} = buildLayout();
+
+// ============================================================
+// STATE
+// ============================================================
+let teamCount=2,teams=[],cur=0,waitQ=false,pendingCell=null,curQ=null,logs=[],timerInterval=null;
+let selectedMatchLeft=null, currentPairs=[];
+
+function openRulesModal(){document.getElementById('rules-modal-overlay').classList.add('open')}
+function closeRulesModal(e){if(e.target===document.getElementById('rules-modal-overlay'))closeRulesModalDirect()}
+function closeRulesModalDirect(){document.getElementById('rules-modal-overlay').classList.remove('open')}
+
+function setCount(n){
+  teamCount=n;
+  document.querySelectorAll('.cnt-btn').forEach((b,i)=>b.classList.toggle('sel',i===n-2));
+  renderTeamInputs();
+}
+
+function renderTeamInputs(){
+  const g=document.getElementById('teams-grid');g.innerHTML='';
+  for(let i=0;i<teamCount;i++){
+    const dots=PALETTE.map((p,ci)=>`<div class="c-dot${ci===i?' sel':''}" style="background:${p.hex}" data-t="${i}" data-ci="${ci}" onclick="pickColor(${i},${ci})"></div>`).join('');
+    g.innerHTML+=`<div class="team-card" id="tc${i}">
+      <div class="team-card-header">
+        <div class="team-icon" id="ticon${i}" style="background:${DFLT_COLORS[i]}22;border-color:${DFLT_COLORS[i]}99">🏅</div>
+        <div class="team-card-title">Команда ${i+1}</div>
+      </div>
+      <input class="team-input" id="tname${i}" value="${DFLT_NAMES[i]}" placeholder="Команда атауы">
+      <div class="color-row" id="crow${i}">${dots}</div>
+    </div>`;
+  }
+}
+
+function pickColor(ti,ci){
+  document.querySelectorAll(`[data-t="${ti}"]`).forEach(d=>d.classList.remove('sel'));
+  document.querySelectorAll(`[data-t="${ti}"][data-ci="${ci}"]`).forEach(d=>d.classList.add('sel'));
+  const col=PALETTE[ci].hex;
+  const icon=document.getElementById(`ticon${ti}`);
+  if(icon){icon.style.background=col+'22';icon.style.borderColor=col+'99';}
+}
+
+function getTeamColor(ti){
+  const sel=document.querySelector(`[data-t="${ti}"].sel`);
+  return sel?sel.style.background:DFLT_COLORS[ti];
+}
+
+function startGame(){
+  // Apply selected chapter questions
+  QS = ALL_QS[selectedChapter];
+  const chapterNames = {jasushalyq:'Жасушалық биология', tukym:'Тұқымқуалаушылық және өзгергіштік'};
+  const chapterIcons = {jasushalyq:'🔬', tukym:'🧬'};
+  document.querySelector('.gh-logo').textContent = (chapterIcons[selectedChapter]||'🧬')+' BIO MONOPOLY';
+
+  teams=[];
+  for(let i=0;i<teamCount;i++){
+    const name=(document.getElementById(`tname${i}`).value||DFLT_NAMES[i]).trim();
+    teams.push({name,color:getTeamColor(i),score:0,pos:0,skip:false});
+  }
+  cur=0;logs=[];waitQ=false;pendingCell=null;
+  document.getElementById('setup-screen').classList.remove('active');
+  document.getElementById('game-screen').classList.add('active');
+  renderBoard();updateSidePanels();updateTurnIndicator();
+}
+
+// ============================================================
+// BOARD RENDER
+// ============================================================
+function renderBoard(){
+  const b=document.getElementById('board');
+  b.innerHTML='';
+  const CELL_SZ=64; // px per cell
+  b.style.gridTemplateColumns=`repeat(${GRID_COLS},${CELL_SZ}px)`;
+  b.style.gridTemplateRows=`repeat(${GRID_ROWS},${CELL_SZ}px)`;
+  b.style.gap='3px';
+
+  // Place center cell
+  let centerPlaced=false;
+
+  for(let r=0;r<GRID_ROWS;r++){
+    for(let c=0;c<GRID_COLS;c++){
+      const cid=LAYOUT[r][c];
+      // Center region: rows 1..ROWS-2, cols 1..COLS-2
+      if(r===1&&c===1&&!centerPlaced){
+        const div=document.createElement('div');
+        div.className='cell center-cell';
+        div.style.gridColumn=`2/${GRID_COLS}`;
+        div.style.gridRow=`2/${GRID_ROWS}`;
+        const chIcons={jasushalyq:'🔬',tukym:'🧬'};
+        const chShort={jasushalyq:'Жасушалық биология',tukym:'Тұқымқуалаушылық'};
+        div.innerHTML=`<div style="font-size:32px">${chIcons[selectedChapter]||'🧬'}</div><div class="center-logo">BIO MONOPOLY</div><div class="center-sub">${chShort[selectedChapter]||''}</div><div class="level-chips"><span class="lchip e">А +1</span><span class="lchip m">В +2</span><span class="lchip h">С +3</span></div>`;
+        b.appendChild(div);centerPlaced=true;continue;
+      }
+      // Skip inner cells (already covered by center)
+      if(r>=1&&r<=GRID_ROWS-2&&c>=1&&c<=GRID_COLS-2){continue;}
+
+      if(cid===null){
+        const d=document.createElement('div');d.className='cell empty';b.appendChild(d);continue;
+      }
+      const cell=CELLS[cid];
+      const div=document.createElement('div');
+      let cls=cell.type;
+      if(cell.type==='special')cls=`special ${cell.special||''}`;
+      div.className=`cell ${cls}`;div.id=`cell${cid}`;
+      let ptsLabel='';
+      if(cell.type==='easy')ptsLabel='<div class="cell-pts">+1б</div>';
+      else if(cell.type==='med')ptsLabel='<div class="cell-pts">+2б</div>';
+      else if(cell.type==='hard')ptsLabel='<div class="cell-pts">+3б</div>';
+      else if(cell.special==='lab')ptsLabel='<div class="cell-pts">+2б</div>';
+      else if(cell.special==='virus')ptsLabel='<div class="cell-pts">-1б</div>';
+      else if(cell.special==='hard_cell')ptsLabel='<div class="cell-pts">+3б</div>';
+      div.innerHTML=`<div class="cell-num">${cid===0?'':cid}</div><div class="cell-icon">${cell.icon}</div><div class="cell-name">${cell.name}</div>${ptsLabel}<div class="cell-pawns" id="pawns${cid}"></div>`;
+      b.appendChild(div);
+    }
+  }
+  placePawns();
+}
+
+function placePawns(){
+  document.querySelectorAll('.cell').forEach(c=>{
+    c.classList.remove('has-team-1','has-team-2');
+    ['--gc','--gc2','--gc3','--gc4','--gc5','--gc6'].forEach(v=>c.style.removeProperty(v));
+  });
+  const posMap={};
+  teams.forEach(t=>{
+    if(!posMap[t.pos])posMap[t.pos]=[];
+    posMap[t.pos].push(t.color);
+  });
+  const hr=(h,a)=>{
+    const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+    return `rgba(${r},${g},${b},${a})`;
+  };
+  Object.entries(posMap).forEach(([pos,colors])=>{
+    const el=document.getElementById(`cell${pos}`);
+    if(!el)return;
+    if(colors.length===1){
+      el.style.setProperty('--gc', hr(colors[0],.95));    // core glow
+      el.style.setProperty('--gc2',hr(colors[0],.45));    // outer halo
+      el.style.setProperty('--gc3',hr(colors[0],.3));     // pulse ring
+      el.classList.add('has-team-1');
+    } else {
+      el.style.setProperty('--gc', hr(colors[0],.95));
+      el.style.setProperty('--gc2',hr(colors[0],.45));
+      el.style.setProperty('--gc3',hr(colors[0],.3));
+      el.style.setProperty('--gc4',hr(colors[1],.95));
+      el.style.setProperty('--gc5',hr(colors[1],.45));
+      el.style.setProperty('--gc6',hr(colors[1],.3));
+      el.classList.add('has-team-2');
+    }
+  });
+}
+
+function updateSidePanels(){
+  const lc=document.getElementById('left-team-cards'),rc=document.getElementById('right-team-cards');
+  lc.innerHTML='';rc.innerHTML='';
+  teams.forEach((t,i)=>{
+    const isActive=i===cur;
+    const pct=Math.min(100,Math.round(t.score/WIN_SCORE*100));
+    const html=`<div class="team-status-card${isActive?' active-team':''}">
+      <div class="tsc-header">
+        <div class="tsc-dot" style="background:${t.color}"></div>
+        <div class="tsc-name" style="color:${isActive?t.color:'var(--text)'}">${t.name}</div>
+        ${isActive?`<span class="tsc-active-badge" style="background:${t.color}">Кезек</span>`:''}
+      </div>
+      <div class="tsc-score" style="color:${t.color}">${t.score}</div>
+      <div class="tsc-score-label">балл</div>
+      <div class="tsc-pos">📍 ${CELLS[t.pos].name}</div>
+      <div class="tsc-bar-wrap"><div class="tsc-bar" style="background:${t.color};width:${pct}%"></div></div>
+    </div>`;
+    if(i%2===0)lc.innerHTML+=html;else rc.innerHTML+=html;
+  });
+}
+
+function updateTurnIndicator(){
+  const t=teams[cur];
+  const nm=document.getElementById('gh-turn-name');
+  nm.textContent=t.name;nm.style.background=t.color;
+}
+
+function setEffect(msg,cls){
+  const a=document.getElementById('effect-area');
+  a.innerHTML=`<div class="effect-msg ${cls}">${msg}</div>`;
+  setTimeout(()=>{a.innerHTML='';},3500);
+}
+
+function addLog(team,msg){
+  logs.unshift({color:team.color,msg:`${team.name}: ${msg}`});
+  if(logs.length>50)logs.pop();
+  document.getElementById('log-area').innerHTML=logs.map(l=>`<div class="log-item"><div class="log-dot" style="background:${l.color}"></div><span>${l.msg}</span></div>`).join('');
+}
+
+// ============================================================
+// STEP ANIMATION
+// ============================================================
+function animateSteps(teamColor,startPos,steps,onDone){
+  let step=0,currentPos=startPos;
+  const total=CELLS.length;
+  function lightCell(pos,on){
+    const el=document.getElementById(`cell${pos}`);
+    if(!el)return;
+    if(on){
+      const hr=(h,a)=>{const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;};
+      el.style.setProperty('--gc', hr(teamColor,.95));
+      el.style.setProperty('--gc2',hr(teamColor,.45));
+      el.style.setProperty('--gc3',hr(teamColor,.3));
+      el.classList.add('has-team-1','step-highlight');
+    }
+    else{
+      el.classList.remove('has-team-1','step-highlight');
+      ['--gc','--gc2','--gc3'].forEach(v=>el.style.removeProperty(v));
+    }
+  }
+  function doStep(){
+    if(step>=steps){onDone(currentPos);return;}
+    if(step>0)lightCell(currentPos,false);
+    currentPos=(currentPos+1)%total;step++;
+    lightCell(currentPos,true);
+    setTimeout(doStep,300);
+  }
+  doStep();
+}
+
+// ============================================================
+// DICE & TURN
+// ============================================================
+function rollDice(){
+  const t=teams[cur];
+  if(waitQ||t.skip)return;
+  const roll=Math.floor(Math.random()*6)+1;
+  const faces=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  const df=document.getElementById('dice-face');
+  df.textContent=faces[roll-1];df.classList.add('rolling');
+  setTimeout(()=>df.classList.remove('rolling'),400);
+  document.getElementById('dice-btn').disabled=true;
+  document.getElementById('show-q-btn').classList.remove('visible');
+  addLog(t,`Кубик: ${roll}`);
+  const startPos=t.pos;
+  animateSteps(t.color,startPos,roll,(finalPos)=>{
+    t.pos=finalPos;
+    const el=document.getElementById(`cell${finalPos}`);
+    if(el){el.classList.remove('step-highlight');}
+    placePawns();updateSidePanels();
+    addLog(t,`→ ${CELLS[t.pos].name}`);
+    const cell=CELLS[t.pos];
+    if(cell.type==='easy'||cell.type==='med'||cell.type==='hard'||cell.special==='hard_cell'){
+      pendingCell=cell;
+      document.getElementById('show-q-btn').classList.add('visible');
+    } else {
+      handleCell(cell);
+    }
+  });
+}
+
+function showQuestion(){
+  if(!pendingCell)return;
+  document.getElementById('show-q-btn').classList.remove('visible');
+  openQuestion(pendingCell);pendingCell=null;
+}
+
+function doSkip(){
+  const t=teams[cur];t.skip=false;
+  addLog(t,'Токсин — жүріс өткізілді');
+  setEffect('⏭ Жүріс өткізілді','effect-info');
+  document.getElementById('skip-btn').classList.remove('visible');
+  nextTurn();
+}
+
+function animateCellSpecial(id,animClass){
+  const el=document.getElementById(`cell${id}`);
+  if(!el)return;
+  el.classList.add(animClass);
+  setTimeout(()=>el.classList.remove(animClass),2400);
+}
+
+function handleCell(cell){
+  const t=teams[cur];
+  if(cell.special==='lab'){
+    animateCellSpecial(cell.id,'anim-lab');
+    t.score+=2;setEffect('🔬 Зертхана! +2 балл!','effect-good');
+    addLog(t,'+2 балл (Зертхана)');updateSidePanels();
+    if(checkWin())return;setTimeout(nextTurn,1800);
+  } else if(cell.special==='virus'){
+    animateCellSpecial(cell.id,'anim-virus');
+    t.score=Math.max(0,t.score-1);setEffect('🦠 Вирус! -1 балл!','effect-bad');
+    addLog(t,'-1 балл (Вирус)');updateSidePanels();setTimeout(nextTurn,1800);
+  } else if(cell.special==='mutation'){
+    animateCellSpecial(cell.id,'anim-mutation');
+    setEffect('🧬 Мутация! Кубикті қайтадан тастаңыз!','effect-info');
+    addLog(t,'Мутация — қайта тастайды');
+    document.getElementById('dice-face').textContent='🎲';
+    document.getElementById('dice-btn').disabled=false;
+  } else if(cell.special==='toxin'){
+    animateCellSpecial(cell.id,'anim-toxin');
+    t.skip=true;setEffect('☠️ Токсин! Келесі жүрісті өткізіп жіберіңіз!','effect-bad');
+    addLog(t,'Токсин — жүрісті өткізу белгіленді');updateSidePanels();setTimeout(nextTurn,1800);
+  } else if(cell.special==='transport'){
+    animateCellSpecial(cell.id,'anim-transport');
+    const bonus=Math.floor(Math.random()*3)+1;
+    t.pos=(t.pos+bonus)%CELLS.length;
+    setEffect(`🔄 Тасымал! +${bonus} қосымша ұяшық!`,'effect-good');
+    addLog(t,`Тасымал +${bonus} → ${CELLS[t.pos].name}`);
+    placePawns();updateSidePanels();setTimeout(()=>handleCell(CELLS[t.pos]),900);
+  } else if(cell.id===0){
+    setEffect('⭐ Стартқа оралдыңыз!','effect-info');setTimeout(nextTurn,1500);
+  } else {
+    setTimeout(nextTurn,1000);
+  }
+}
+
+// ============================================================
+// QUESTION SYSTEM
+// ============================================================
+function openQuestion(cell){
+  waitQ=true;
+  document.getElementById('dice-btn').disabled=true;
+  let pool,level,pts;
+  if(cell.special==='hard_cell'||cell.type==='hard'){pool=QS.hard;level='hard';pts=3;}
+  else if(cell.type==='med'){pool=QS.med;level='med';pts=2;}
+  else{pool=QS.easy;level='easy';pts=1;}
+  const idx=Math.floor(Math.random()*pool.length);
+  curQ={...pool[idx],level,pts,cellId:cell.id};
+
+  const badges={easy:'А деңгейі',med:'В деңгейі',hard:'С деңгейі'};
+  const t=teams[cur];
+  const badgeEl=document.getElementById('cqc-badge');
+  badgeEl.textContent=badges[level];badgeEl.className=`cqc-badge ${level}`;
+  document.getElementById('cqc-cell').textContent=cell.name;
+  const ptsEl=document.getElementById('cqc-pts');
+  ptsEl.textContent=`+${pts} балл`;
+  ptsEl.style.color=level==='easy'?'var(--green-d)':level==='med'?'var(--yellow-d)':'var(--red-d)';
+  const banner=document.getElementById('cqc-banner');
+  banner.style.background=t.color+'15';banner.style.borderLeftColor=t.color;
+  document.getElementById('cqc-banner-dot').style.background=t.color;
+  document.getElementById('cqc-banner-name').textContent=t.name;
+  document.getElementById('cqc-answer').style.display='none';
+  document.getElementById('cqc-answer-text').textContent=curQ.answer||'';
+
+  const optArea=document.getElementById('cqc-options-area');
+  optArea.innerHTML='';
+  const pairsDisplay=document.getElementById('cqc-pairs-display');
+  pairsDisplay.style.display='none';pairsDisplay.innerHTML='';
+  const actArea=document.getElementById('cqc-actions');
+
+  if(level==='easy'){
+    // Single choice
+    document.getElementById('cqc-question').textContent=curQ.q;
+    optArea.className='cqc-options';
+    curQ.opts.forEach((opt,i)=>{
+      const btn=document.createElement('div');
+      btn.className='cqc-option';
+      btn.innerHTML=`<span class="opt-key">${String.fromCharCode(65+i)})</span><span>${opt.replace(/^[a-zA-ZаАбвгД0-9]+[\)\.]\s*/,'')}</span>`;
+      btn.onclick=()=>{
+        document.querySelectorAll('.cqc-option').forEach(o=>o.classList.remove('selected'));
+        btn.classList.add('selected');
+        curQ.userSelected=[i];
+      };
+      optArea.appendChild(btn);
+    });
+    actArea.innerHTML=`<button class="btn-show-q" onclick="revealAnswer()">👁 Жауапты ашу</button><button class="btn-check" onclick="checkSingleChoice()">✓ Тексеру</button>`;
+  } else if(level==='med'){
+    // Multiple choice
+    document.getElementById('cqc-question').textContent=curQ.q;
+    optArea.className='cqc-options';
+    curQ.userSelected=[];
+    curQ.opts.forEach((opt,i)=>{
+      const btn=document.createElement('div');
+      btn.className='cqc-option';
+      btn.innerHTML=`<span class="opt-key">${i+1}.</span><span>${opt.replace(/^[0-9A-FА-Яа-я]+[\)\.]\s*/,'')}</span>`;
+      btn.onclick=()=>{
+        const idx2=curQ.userSelected.indexOf(i);
+        if(idx2>=0){curQ.userSelected.splice(idx2,1);btn.classList.remove('selected');}
+        else{curQ.userSelected.push(i);btn.classList.add('selected');}
+      };
+      optArea.appendChild(btn);
+    });
+    actArea.innerHTML=`<button class="btn-show-q" onclick="revealAnswer()">👁 Жауапты ашу</button><button class="btn-check" onclick="checkMultipleChoice()">✓ Тексеру</button>`;
+  } else {
+    // Matching (С деңгейі)
+    document.getElementById('cqc-question').style.whiteSpace='pre-line';
+    document.getElementById('cqc-question').textContent=curQ.q;
+    selectedMatchLeft=null;currentPairs=[];
+    optArea.className='match-grid';
+    // Left column
+    const leftCol=document.createElement('div');leftCol.className='match-col';
+    leftCol.innerHTML='<div class="match-col-title">Сол жақ</div>';
+    curQ.matchLeft.forEach((item,i)=>{
+      const d=document.createElement('div');d.className='match-item';d.id=`ml${i}`;d.textContent=item;
+      d.onclick=()=>selectMatchLeft(i);
+      leftCol.appendChild(d);
+    });
+    // Right column
+    const rightCol=document.createElement('div');rightCol.className='match-col';
+    rightCol.innerHTML='<div class="match-col-title">Оң жақ</div>';
+    curQ.matchRight.forEach((item,ri)=>{
+      const d=document.createElement('div');d.className='match-item';d.id=`mr${ri}`;d.textContent=item;
+      d.onclick=()=>selectMatchRight(ri);
+      rightCol.appendChild(d);
+    });
+    optArea.appendChild(leftCol);optArea.appendChild(rightCol);
+    pairsDisplay.style.display='flex';
+    actArea.innerHTML=`<button class="btn-show-q" onclick="clearMatchPairs()">🔄 Тазалау</button><button class="btn-show-q" onclick="revealAnswer()">👁 Жауапты ашу</button><button class="btn-check" onclick="checkMatching()">✓ Тексеру</button>`;
+  }
+
+  startTimer(pts===1?40:pts===2?60:90);
+  document.getElementById('cqc').classList.add('visible');
+}
+
+function selectMatchLeft(i){
+  selectedMatchLeft=i;
+  document.querySelectorAll('[id^="ml"]').forEach(el=>el.classList.remove('selected-left'));
+  const el=document.getElementById(`ml${i}`);if(el)el.classList.add('selected-left');
+}
+
+function selectMatchRight(ri){
+  if(selectedMatchLeft===null)return;
+  // Remove existing pair with this left or this right
+  currentPairs=currentPairs.filter(p=>p[0]!==selectedMatchLeft&&p[1]!==ri);
+  currentPairs.push([selectedMatchLeft,ri]);
+  renderPairs();
+  selectedMatchLeft=null;
+  document.querySelectorAll('[id^="ml"]').forEach(el=>el.classList.remove('selected-left'));
+}
+
+function renderPairs(){
+  const pd=document.getElementById('cqc-pairs-display');pd.innerHTML='';
+  currentPairs.forEach(([li,ri])=>{
+    const chip=document.createElement('div');chip.className='match-pair-chip';
+    chip.textContent=`${curQ.matchLeft[li]} → ${curQ.matchRight[ri]}`;
+    pd.appendChild(chip);
+  });
+}
+
+function clearMatchPairs(){currentPairs=[];selectedMatchLeft=null;renderPairs();document.querySelectorAll('[id^="ml"],[id^="mr"]').forEach(el=>{el.classList.remove('selected-left','matched','wrong-match');});}
+
+function checkSingleChoice(){
+  if(!curQ.userSelected||curQ.userSelected.length===0){setEffect('Жауап таңдаңыз!','effect-info');return;}
+  const isCorrect=curQ.userSelected[0]===curQ.correct[0];
+  highlightSingleOpts(isCorrect);
+  setTimeout(()=>judge(isCorrect),600);
+}
+
+function highlightSingleOpts(isCorrect){
+  document.querySelectorAll('.cqc-option').forEach((el,i)=>{
+    if(curQ.correct.includes(i))el.classList.add('correct-opt');
+    else if(curQ.userSelected.includes(i))el.classList.add('wrong-opt');
+  });
+}
+
+function checkMultipleChoice(){
+  if(!curQ.userSelected||curQ.userSelected.length===0){setEffect('Кемінде бір жауап таңдаңыз!','effect-info');return;}
+  const correct=new Set(curQ.correct);
+  const selected=new Set(curQ.userSelected);
+  let hits=0;
+  correct.forEach(c=>{if(selected.has(c))hits++;});
+  const wrongPicks=[...selected].filter(s=>!correct.has(s)).length;
+  // Partial scoring: hits/correct.size * pts, penalize wrong picks
+  const ratio=Math.max(0,(hits-wrongPicks)/correct.size);
+  const earned=Math.round(curQ.pts*ratio);
+
+  document.querySelectorAll('.cqc-option').forEach((el,i)=>{
+    if(correct.has(i))el.classList.add('correct-opt');
+    else if(selected.has(i))el.classList.add('wrong-opt');
+  });
+
+  setTimeout(()=>judgePartial(earned),600);
+}
+
+function checkMatching(){
+  const correctSet=curQ.correctPairs;
+  let matched=0;
+  currentPairs.forEach(([li,ri])=>{
+    if(correctSet.some(([cl,cr])=>cl===li&&cr===ri)){
+      matched++;
+      const el=document.getElementById(`ml${li}`);if(el)el.classList.add('matched');
+    } else {
+      const el=document.getElementById(`ml${li}`);if(el)el.classList.add('wrong-match');
+    }
+  });
+  const total=correctSet.length;
+  const ratio=Math.max(0,matched/total);
+  const earned=Math.round(curQ.pts*ratio);
+  setTimeout(()=>judgePartial(earned),600);
+}
+
+function judgePartial(earned){
+  clearInterval(timerInterval);
+  document.getElementById('cqc').classList.remove('visible');
+  const t=teams[cur];
+  if(earned>=curQ.pts){
+    t.score+=earned;setEffect(`🎉 Дұрыс! +${earned} балл!`,'effect-good');
+    addLog(t,`Дұрыс жауап +${earned} балл`);
+    animateCellSpecial(curQ.cellId,'anim-correct');
+  } else if(earned>0){
+    t.score+=earned;setEffect(`🌟 Жартылай дұрыс! +${earned} балл!`,'effect-info');
+    addLog(t,`Жартылай дұрыс +${earned} балл`);
+  } else {
+    setEffect('❌ Қате. Балл берілмейді.','effect-bad');
+    addLog(t,'Қате жауап — балл жоқ');
+    animateCellSpecial(curQ.cellId,'anim-wrong');
+  }
+  waitQ=false;updateSidePanels();
+  if(checkWin())return;
+  setTimeout(nextTurn,1600);
+}
+
+function judge(correct){
+  clearInterval(timerInterval);
+  document.getElementById('cqc').classList.remove('visible');
+  const t=teams[cur];
+  if(correct){
+    t.score+=curQ.pts;setEffect(`🎉 Дұрыс! +${curQ.pts} балл!`,'effect-good');
+    addLog(t,`Дұрыс жауап +${curQ.pts} балл`);
+    animateCellSpecial(curQ.cellId,'anim-correct');
+  } else {
+    setEffect('❌ Қате. Балл берілмейді.','effect-bad');
+    addLog(t,'Қате жауап — балл жоқ');
+    animateCellSpecial(curQ.cellId,'anim-wrong');
+  }
+  waitQ=false;updateSidePanels();
+  if(checkWin())return;
+  setTimeout(nextTurn,1600);
+}
+
+function revealAnswer(){
+  document.getElementById('cqc-answer').style.display='block';
+}
+
+function startTimer(sec){
+  clearInterval(timerInterval);
+  const bar=document.getElementById('cqc-timer-bar');
+  bar.style.width='100%';let elapsed=0;
+  timerInterval=setInterval(()=>{
+    elapsed+=0.1;const pct=Math.max(0,(1-elapsed/sec)*100);
+    bar.style.width=pct+'%';
+    bar.style.background=pct>60?'var(--green)':pct>30?'var(--yellow)':'var(--red)';
+    if(elapsed>=sec){clearInterval(timerInterval);bar.style.width='0%';}
+  },100);
+}
+
+function nextTurn(){
+  cur=(cur+1)%teams.length;
+  document.getElementById('dice-face').textContent='🎲';
+  document.getElementById('effect-area').innerHTML='';
+  document.getElementById('dice-btn').disabled=false;
+  document.getElementById('show-q-btn').classList.remove('visible');
+  pendingCell=null;
+  const t=teams[cur];
+  const skipBtn=document.getElementById('skip-btn');
+  if(t.skip){skipBtn.classList.add('visible');document.getElementById('dice-btn').disabled=true;}
+  else skipBtn.classList.remove('visible');
+  updateSidePanels();updateTurnIndicator();placePawns();
+}
+
+function checkWin(){
+  const w=teams.find(t=>t.score>=WIN_SCORE);
+  if(w){showResult(w);return true;}return false;
+}
+
+function endGame(){
+  if(!confirm('Ойынды аяқтайсыз ба?'))return;
+  showResult([...teams].sort((a,b)=>b.score-a.score)[0]);
+}
+
+function showResult(winner){
+  clearInterval(timerInterval);
+  document.getElementById('game-screen').classList.remove('active');
+  document.getElementById('result-screen').classList.add('active');
+  document.getElementById('res-name').textContent=winner.name;
+  document.getElementById('res-name').style.color=winner.color;
+  document.getElementById('res-pts').textContent=`${winner.score} балл жинады`;
+  const sorted=[...teams].sort((a,b)=>b.score-a.score);
+  const max=sorted[0].score||1;
+  const medals=['🥇','🥈','🥉','4️⃣'];
+  document.getElementById('podium').innerHTML=sorted.map((t,i)=>`
+    <div class="podium-row" style="${i===0?'border-color:'+t.color+';box-shadow:0 0 0 2px '+t.color+'33':''}">
+      <div class="podium-rank">${medals[i]}</div><div class="podium-dot" style="background:${t.color}"></div>
+      <div class="podium-name" style="color:${i===0?t.color:'var(--text)'}">${t.name}</div>
+      <div class="podium-bar-wrap"><div class="podium-bar" style="background:${t.color};width:${Math.round(t.score/max*100)}%"></div></div>
+      <div class="podium-pts" style="color:${t.color}">${t.score} балл</div>
+    </div>`).join('');
+  confetti();
+}
+
+function confetti(){
+  const colors=['#7c3aed','#2563eb','#12b76a','#f59e0b','#ef4444','#ec4899'];
+  for(let i=0;i<90;i++){setTimeout(()=>{const p=document.createElement('div');p.className='confetti-piece';p.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;transform:rotate(${Math.random()*360}deg)`;document.body.appendChild(p);setTimeout(()=>p.remove(),3500);},i*22);}
+}
+
+function resetGame(){
+  document.getElementById('result-screen').classList.remove('active');
+  document.getElementById('setup-screen').classList.add('active');
+  clearInterval(timerInterval);teams=[];logs=[];cur=0;waitQ=false;pendingCell=null;curQ=null;
+}
+
+document.getElementById('setup-screen').classList.add('active');
+setCount(2);renderTeamInputs();
+</script>
+</body>
+</html>
